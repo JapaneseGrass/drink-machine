@@ -42,6 +42,18 @@ peristaltic pumps via relays to dispense drinks.
 - 8 peristaltic pumps (12V DC, Kamoer NKP, 3mm ID x 5mm OD tubing)
 - Raspberry Pi 4 GPIO pins control relay channels
 
+## GPIO Pin Mapping (BCM numbering)
+| Pump | GPIO |
+|------|------|
+| 1    | 17   |
+| 2    | 18   |
+| 3    | 27   |
+| 4    | 22   |
+| 5    | 23   |
+| 6    | 24   |
+| 7    | 25   |
+| 8    | 4    |
+
 ## Project Structure
 - /backend - Python FastAPI code (runs on Pi)
 - /frontend - Web app (HTML/CSS/JS) served by the Pi
@@ -51,6 +63,9 @@ peristaltic pumps via relays to dispense drinks.
 - Pi is accessible at 192.168.1.208
 - SSH user: japanesegrass
 - GitHub repo: https://github.com/JapaneseGrass/drink-machine
+- Run server: `cd backend && uvicorn main:app --host 0.0.0.0 --port 8000`
+- Test pumps without server: `cd backend && python pump_test.py`
+- Install deps: `cd backend && pip install -r requirements.txt`
 
 ## Core Features To Build
 1. Pump configuration screen — assign ingredients to pumps
