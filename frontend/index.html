@@ -75,10 +75,35 @@
       text-align: center;
       min-height: 1.2em;
       transition: color 0.3s;
+      cursor: pointer;
+      border-bottom: 1px dashed transparent;
+      padding: 2px 4px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .pump-label:hover { border-bottom-color: #333; }
+
+    .pump-label.empty {
+      color: #3a3a3a;
+      font-style: italic;
+      font-weight: 400;
     }
 
     .pump-card.running .pump-label {
       color: #f0c060;
+    }
+
+    .pump-label-input {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #f0c060;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 0.85rem;
+      font-family: inherit;
+      text-align: center;
+      padding: 3px 4px;
+      outline: none;
     }
 
     .run-btn {
@@ -185,7 +210,7 @@
 
 <header>
   <h1>Drink Machine</h1>
-  <div class="subtitle">Pump Control</div>
+  <div class="subtitle">Tap a label to assign an ingredient</div>
 </header>
 
 <div class="pump-grid" id="pump-grid"></div>
@@ -202,6 +227,8 @@
 
 <script>
   const running = new Set();
+  const editing = new Set();
+  const ingredients = {};
 
   function buildGrid() {
     const grid = document.getElementById('pump-grid');
@@ -211,11 +238,69 @@
       card.id = `pump-${i}`;
       card.innerHTML = `
         <div class="pump-number">Pump ${i}</div>
-        <div class="pump-label" id="label-${i}">—</div>
+        <div class="pump-label empty" id="label-${i}" onclick="editLabel(${i})">Tap to assign</div>
         <button class="run-btn" onclick="runPump(${i})">Run</button>
       `;
       grid.appendChild(card);
     }
+  }
+
+  function renderLabel(id) {
+    if (editing.has(id)) return;
+    const label = document.getElementById(`label-${id}`);
+    if (!label) return;
+    const name = ingredients[id] || '';
+    label.textContent = name || 'Tap to assign';
+    label.classList.toggle('empty', !name);
+  }
+
+  function editLabel(id) {
+    if (editing.has(id)) return;
+    editing.add(id);
+    const label = document.getElementById(`label-${id}`);
+    const current = ingredients[id] || '';
+    const input = document.createElement('input');
+    input.className = 'pump-label-input';
+    input.type = 'text';
+    input.value = current;
+    input.placeholder = 'e.g. Vodka';
+    input.maxLength = 24;
+
+    const finish = async (save) => {
+      if (!editing.has(id)) return;
+      editing.delete(id);
+      if (save) {
+        const value = input.value.trim();
+        ingredients[id] = value;
+        await assignPump(id, value);
+      }
+      const fresh = document.createElement('div');
+      fresh.className = 'pump-label';
+      fresh.id = `label-${id}`;
+      fresh.setAttribute('onclick', `editLabel(${id})`);
+      input.replaceWith(fresh);
+      renderLabel(id);
+    };
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') input.blur();
+      else if (e.key === 'Escape') finish(false);
+    });
+    input.addEventListener('blur', () => finish(true));
+
+    label.replaceWith(input);
+    input.focus();
+    input.select();
+  }
+
+  async function assignPump(id, ingredient) {
+    try {
+      await fetch(`/api/pump/${id}/assign`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ingredient }),
+      });
+    } catch {}
   }
 
   async function runPump(id) {
@@ -247,12 +332,16 @@
     try {
       const data = await fetch('/api/status').then(r => r.json());
       for (const [id, info] of Object.entries(data.pumps)) {
-        setRunning(parseInt(id), info.running);
+        const pumpId = parseInt(id);
+        setRunning(pumpId, info.running);
+        ingredients[pumpId] = info.ingredient || '';
+        renderLabel(pumpId);
       }
     } catch {}
   }
 
   buildGrid();
+  pollStatus();
   setInterval(pollStatus, 2000);
 </script>
 </body>

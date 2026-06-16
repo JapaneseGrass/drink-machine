@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import storage
 from pumps import PumpController
 
 FRONTEND = os.path.join(os.path.dirname(__file__), "..", "frontend")
@@ -16,6 +17,7 @@ controller: PumpController
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global controller
+    storage.init_db()
     controller = PumpController()
     yield
     controller.cleanup()
@@ -27,6 +29,10 @@ app.mount("/static", StaticFiles(directory=FRONTEND), name="static")
 
 class RunRequest(BaseModel):
     seconds: float = 3.0
+
+
+class AssignRequest(BaseModel):
+    ingredient: str = ""
 
 
 @app.get("/")
@@ -48,11 +54,23 @@ def stop_all():
     return {"status": "stopped"}
 
 
+@app.post("/api/pump/{pump_id}/assign")
+def assign_pump(pump_id: int, req: AssignRequest):
+    if not 1 <= pump_id <= 8:
+        raise HTTPException(400, "Pump ID must be 1–8")
+    storage.set_assignment(pump_id, req.ingredient)
+    return {"status": "ok", "pump": pump_id, "ingredient": req.ingredient.strip()}
+
+
 @app.get("/api/status")
 def status():
+    assignments = storage.get_assignments()
     return {
         "pumps": {
-            i: {"running": controller.is_running(i)}
+            i: {
+                "running": controller.is_running(i),
+                "ingredient": assignments.get(i, ""),
+            }
             for i in range(1, 9)
         }
     }
