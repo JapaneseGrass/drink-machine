@@ -41,6 +41,11 @@ def index():
     return FileResponse(os.path.join(FRONTEND, "index.html"))
 
 
+@app.get("/test")
+def hardware_test():
+    return FileResponse(os.path.join(FRONTEND, "test.html"))
+
+
 @app.post("/api/pump/{pump_id}/run")
 async def run_pump(pump_id: int, req: RunRequest):
     if not 1 <= pump_id <= 8:

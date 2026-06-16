@@ -3,287 +3,367 @@
     "id": "margarita",
     "name": "Margarita",
     "category": "Tequila",
+    "glass": "margarita",
+    "color": "#cfe089",
     "ingredients": [
       { "name": "Tequila", "ml": 50 },
       { "name": "Triple Sec", "ml": 25 },
       { "name": "Lime Juice", "ml": 25 }
     ],
-    "garnish": "Salt rim, lime wheel"
+    "garnish": "Salt rim, lime wheel",
+    "history": "The most popular tequila cocktail in the United States. Its exact origin is disputed, with claims spanning 1930s–40s Mexico and the Texas border; the name means \"daisy\" in Spanish. It is a defining drink of Tex-Mex bars, especially along the border near El Paso."
   },
   {
     "id": "paloma",
     "name": "Paloma",
     "category": "Tequila",
+    "glass": "highball",
+    "color": "#f2938c",
     "ingredients": [
       { "name": "Tequila", "ml": 50 },
       { "name": "Grapefruit Soda", "ml": 100 },
       { "name": "Lime Juice", "ml": 15 }
     ],
-    "garnish": "Salt rim, lime wedge"
+    "garnish": "Salt rim, lime wedge",
+    "history": "Mexico's most popular tequila cocktail — far more common there than the margarita. It is traditionally built with grapefruit soda such as Squirt or Jarritos. \"Paloma\" means \"dove\" in Spanish."
   },
   {
     "id": "ranch-water",
     "name": "Ranch Water",
     "category": "Tequila",
+    "glass": "highball",
+    "color": "#e6efe8",
     "ingredients": [
       { "name": "Tequila", "ml": 50 },
       { "name": "Lime Juice", "ml": 15 },
       { "name": "Soda Water", "ml": 120 }
     ],
-    "garnish": "Lime wedge (Topo Chico, El Paso style)"
+    "garnish": "Lime wedge (Topo Chico, El Paso style)",
+    "history": "A West Texas highball of tequila, lime, and Topo Chico mineral water. It was born in the Trans-Pecos region around Fort Davis and Marfa and is beloved across far West Texas, including El Paso."
   },
   {
     "id": "tequila-sunrise",
     "name": "Tequila Sunrise",
     "category": "Tequila",
+    "glass": "highball",
+    "color": "#ef8a3c",
     "ingredients": [
       { "name": "Tequila", "ml": 45 },
       { "name": "Orange Juice", "ml": 120 },
       { "name": "Grenadine", "ml": 15 }
     ],
-    "garnish": "Orange slice, cherry"
+    "garnish": "Orange slice, cherry",
+    "history": "Named for the layered colors that form as grenadine settles to the bottom. The modern version was created in the early 1970s in Sausalito, California, and spread widely after the Rolling Stones adopted it on their 1972 tour."
   },
   {
     "id": "tequila-soda",
     "name": "Tequila Soda",
     "category": "Tequila",
+    "glass": "highball",
+    "color": "#e6efe8",
     "ingredients": [
       { "name": "Tequila", "ml": 45 },
       { "name": "Soda Water", "ml": 120 },
       { "name": "Lime Juice", "ml": 10 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "A simple, light highball of tequila and soda water with a squeeze of lime. It has become a modern bar standard for drinkers wanting something crisp and low in sugar."
   },
   {
     "id": "mexican-mule",
     "name": "Mexican Mule",
     "category": "Tequila",
+    "glass": "rocks",
+    "color": "#e0b070",
     "ingredients": [
       { "name": "Tequila", "ml": 50 },
       { "name": "Ginger Beer", "ml": 120 },
       { "name": "Lime Juice", "ml": 15 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "A tequila twist on the Moscow Mule, swapping vodka for tequila alongside ginger beer and lime. It is sometimes called a \"Burro\" and is a natural fit anywhere mules and margaritas meet."
   },
   {
     "id": "cape-codder",
     "name": "Vodka Cranberry",
     "category": "Vodka",
+    "glass": "highball",
+    "color": "#c0304a",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Cranberry Juice", "ml": 120 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "Also known as the Cape Codder, named for Cape Cod's cranberry bogs. It was popularized by Ocean Spray in the mid-20th century, originally marketed as the \"Red Devil.\""
   },
   {
     "id": "screwdriver",
     "name": "Screwdriver",
     "category": "Vodka",
+    "glass": "highball",
+    "color": "#f0a429",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Orange Juice", "ml": 120 }
     ],
-    "garnish": "Orange slice"
+    "garnish": "Orange slice",
+    "history": "Vodka and orange juice, said to be named by American oil workers in the Persian Gulf who stirred the drink with their screwdrivers. It has been a brunch and bar staple since the 1950s."
   },
   {
     "id": "vodka-soda",
     "name": "Vodka Soda",
     "category": "Vodka",
+    "glass": "highball",
+    "color": "#e6efe8",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Soda Water", "ml": 120 },
       { "name": "Lime Juice", "ml": 10 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "The quintessential minimalist highball — just vodka, soda water, and a squeeze of lime. It is a perennial go-to for a clean, low-sugar drink."
   },
   {
     "id": "vodka-tonic",
     "name": "Vodka Tonic",
     "category": "Vodka",
+    "glass": "highball",
+    "color": "#e6efe8",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Tonic Water", "ml": 120 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "A lighter cousin of the gin and tonic. The quinine in tonic water gives it a crisp, faintly bitter edge that pairs cleanly with vodka."
   },
   {
     "id": "cosmopolitan",
     "name": "Cosmopolitan",
     "category": "Vodka",
+    "glass": "coupe",
+    "color": "#d24a6a",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Triple Sec", "ml": 15 },
       { "name": "Cranberry Juice", "ml": 30 },
       { "name": "Lime Juice", "ml": 15 }
     ],
-    "garnish": "Lime wheel"
+    "garnish": "Lime wheel",
+    "history": "A pink vodka cocktail that surged in popularity through the 1990s and was cemented in pop culture by \"Sex and the City.\" It balances vodka and triple sec with cranberry and lime."
   },
   {
     "id": "sea-breeze",
     "name": "Sea Breeze",
     "category": "Vodka",
+    "glass": "highball",
+    "color": "#d65a6a",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Cranberry Juice", "ml": 90 },
       { "name": "Grapefruit Juice", "ml": 30 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "A vodka highball with cranberry and grapefruit juice that became a hit in the 1980s. It is tart, refreshing, and named for breezy summer days by the water."
   },
   {
     "id": "bay-breeze",
     "name": "Bay Breeze",
     "category": "Vodka",
+    "glass": "highball",
+    "color": "#de6a72",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Cranberry Juice", "ml": 60 },
       { "name": "Pineapple Juice", "ml": 60 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "A close relative of the Sea Breeze that swaps grapefruit for pineapple juice, giving it a softer, sweeter tropical profile."
   },
   {
     "id": "greyhound",
     "name": "Greyhound",
     "category": "Vodka",
+    "glass": "highball",
+    "color": "#e88a7a",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Grapefruit Juice", "ml": 120 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "Vodka and grapefruit juice, dating to the 1930s. Add a salted rim and it becomes its close cousin, the Salty Dog."
   },
   {
     "id": "madras",
     "name": "Madras",
     "category": "Vodka",
+    "glass": "highball",
+    "color": "#db5a3c",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Cranberry Juice", "ml": 90 },
       { "name": "Orange Juice", "ml": 30 }
     ],
-    "garnish": "Orange slice"
+    "garnish": "Orange slice",
+    "history": "Vodka with cranberry and orange juice, named after the colorful madras plaid fabric for its reddish-orange hue."
   },
   {
     "id": "moscow-mule",
     "name": "Moscow Mule",
     "category": "Vodka",
+    "glass": "rocks",
+    "color": "#e0b070",
     "ingredients": [
       { "name": "Vodka", "ml": 45 },
       { "name": "Ginger Beer", "ml": 120 },
       { "name": "Lime Juice", "ml": 15 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "Vodka, ginger beer, and lime, traditionally served in a copper mug. It was invented in 1941 in Los Angeles as a clever way to sell both vodka and ginger beer."
   },
   {
     "id": "gin-tonic",
     "name": "Gin and Tonic",
     "category": "Gin",
+    "glass": "highball",
+    "color": "#e6efe8",
     "ingredients": [
       { "name": "Gin", "ml": 45 },
       { "name": "Tonic Water", "ml": 120 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "Born in British colonial India, where tonic's quinine helped fight malaria and gin made the medicine palatable. It has since become a global classic."
   },
   {
     "id": "tom-collins",
     "name": "Tom Collins",
     "category": "Gin",
+    "glass": "highball",
+    "color": "#eef0c0",
     "ingredients": [
       { "name": "Gin", "ml": 45 },
       { "name": "Lemon Juice", "ml": 30 },
       { "name": "Simple Syrup", "ml": 15 },
       { "name": "Soda Water", "ml": 90 }
     ],
-    "garnish": "Lemon slice, cherry"
+    "garnish": "Lemon slice, cherry",
+    "history": "A tall, fizzy mix of gin, lemon, sugar, and soda. Its name traces to an 1874 New York hoax about a fictitious gossip named Tom Collins."
   },
   {
     "id": "gin-rickey",
     "name": "Gin Rickey",
     "category": "Gin",
+    "glass": "highball",
+    "color": "#e6efe8",
     "ingredients": [
       { "name": "Gin", "ml": 45 },
       { "name": "Lime Juice", "ml": 20 },
       { "name": "Soda Water", "ml": 90 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "A dry, unsweetened highball of gin, lime, and soda. It was created in 1880s Washington, D.C., and became a favorite of the Jazz Age."
   },
   {
     "id": "cuba-libre",
     "name": "Cuba Libre",
     "category": "Rum",
+    "glass": "highball",
+    "color": "#6a3a1f",
     "ingredients": [
       { "name": "White Rum", "ml": 45 },
       { "name": "Cola", "ml": 120 },
       { "name": "Lime Juice", "ml": 10 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "Rum and cola with lime, born in Cuba around 1900 after Coca-Cola arrived on the island. The name means \"Free Cuba,\" a toast dating to the Spanish-American War era."
   },
   {
     "id": "daiquiri",
     "name": "Daiquiri",
     "category": "Rum",
+    "glass": "coupe",
+    "color": "#eef0d0",
     "ingredients": [
       { "name": "White Rum", "ml": 50 },
       { "name": "Lime Juice", "ml": 25 },
       { "name": "Simple Syrup", "ml": 15 }
     ],
-    "garnish": "Lime wheel"
+    "garnish": "Lime wheel",
+    "history": "Rum, lime, and sugar, named for a beach near Santiago de Cuba. A favorite of Ernest Hemingway, it serves as the template for countless variations."
   },
   {
     "id": "pina-colada",
     "name": "Pina Colada",
     "category": "Rum",
+    "glass": "highball",
+    "color": "#f0ead0",
     "ingredients": [
       { "name": "White Rum", "ml": 45 },
       { "name": "Pineapple Juice", "ml": 90 },
       { "name": "Coconut Cream", "ml": 30 }
     ],
-    "garnish": "Pineapple wedge, cherry"
+    "garnish": "Pineapple wedge, cherry",
+    "history": "Puerto Rico's national drink, blending rum, pineapple, and coconut cream. It was invented in San Juan in the 1950s–60s; the name means \"strained pineapple.\""
   },
   {
     "id": "dark-and-stormy",
     "name": "Dark and Stormy",
     "category": "Rum",
+    "glass": "highball",
+    "color": "#b06a2a",
     "ingredients": [
       { "name": "Dark Rum", "ml": 50 },
       { "name": "Ginger Beer", "ml": 120 },
       { "name": "Lime Juice", "ml": 15 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "Dark rum floated over ginger beer, originating in Bermuda. Gosling's holds a trademark on the name, made with their Black Seal rum."
   },
   {
     "id": "whiskey-coke",
     "name": "Whiskey and Coke",
     "category": "Whiskey",
+    "glass": "highball",
+    "color": "#5a2f18",
     "ingredients": [
       { "name": "Whiskey", "ml": 45 },
       { "name": "Cola", "ml": 120 }
     ],
-    "garnish": "Lime wedge (optional)"
+    "garnish": "Lime wedge (optional)",
+    "history": "A straightforward highball pairing whiskey with cola. Ubiquitous in American bars, its most famous form is the \"Jack and Coke.\""
   },
   {
     "id": "whiskey-sour",
     "name": "Whiskey Sour",
     "category": "Whiskey",
+    "glass": "rocks",
+    "color": "#e0a040",
     "ingredients": [
       { "name": "Whiskey", "ml": 45 },
       { "name": "Lemon Juice", "ml": 25 },
       { "name": "Simple Syrup", "ml": 15 }
     ],
-    "garnish": "Cherry, orange slice"
+    "garnish": "Cherry, orange slice",
+    "history": "Whiskey, lemon, and sugar, documented since the 1860s. It is a timeless template — balanced, tart, and easy to love."
   },
   {
     "id": "jack-and-ginger",
     "name": "Whiskey and Ginger",
     "category": "Whiskey",
+    "glass": "highball",
+    "color": "#d0a050",
     "ingredients": [
       { "name": "Whiskey", "ml": 45 },
       { "name": "Ginger Ale", "ml": 120 }
     ],
-    "garnish": "Lime wedge"
+    "garnish": "Lime wedge",
+    "history": "Whiskey lengthened with ginger ale, often called a \"Jack and Ginger.\" It is crisp, easygoing, and endlessly popular."
   },
   {
     "id": "long-island",
     "name": "Long Island Iced Tea",
     "category": "Mixed",
+    "glass": "highball",
+    "color": "#9a5a2a",
     "ingredients": [
       { "name": "Vodka", "ml": 15 },
       { "name": "Gin", "ml": 15 },
@@ -293,26 +373,33 @@
       { "name": "Lemon Juice", "ml": 25 },
       { "name": "Cola", "ml": 60 }
     ],
-    "garnish": "Lemon wedge"
+    "garnish": "Lemon wedge",
+    "history": "A potent mix of five spirits with a splash of cola that mimics the look of iced tea. Most accounts credit a bartender on Long Island, New York, in the 1970s."
   },
   {
     "id": "shirley-temple",
     "name": "Shirley Temple",
     "category": "Non-Alcoholic",
+    "glass": "highball",
+    "color": "#e0506a",
     "ingredients": [
       { "name": "Lemon-Lime Soda", "ml": 180 },
       { "name": "Grenadine", "ml": 15 }
     ],
-    "garnish": "Cherry"
+    "garnish": "Cherry",
+    "history": "A non-alcoholic favorite of lemon-lime soda and grenadine, finished with a cherry. It was named for the child film star in the 1930s."
   },
   {
     "id": "roy-rogers",
     "name": "Roy Rogers",
     "category": "Non-Alcoholic",
+    "glass": "highball",
+    "color": "#5a2f18",
     "ingredients": [
       { "name": "Cola", "ml": 180 },
       { "name": "Grenadine", "ml": 15 }
     ],
-    "garnish": "Cherry"
+    "garnish": "Cherry",
+    "history": "The cola-based, non-alcoholic counterpart to the Shirley Temple, named for the singing cowboy actor Roy Rogers."
   }
 ]

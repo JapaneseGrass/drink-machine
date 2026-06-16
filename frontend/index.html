@@ -4,382 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #0a0a0a;
-      color: #f0f0f0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      padding: 20px 16px 40px;
-    }
-
-    header {
-      text-align: center;
-      padding: 28px 0 32px;
-    }
-
-    h1 {
-      font-size: 1.6rem;
-      font-weight: 300;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      color: #f0c060;
-    }
-
-    .subtitle {
-      font-size: 0.65rem;
-      letter-spacing: 3px;
-      color: #444;
-      text-transform: uppercase;
-      margin-top: 8px;
-    }
-
-    .pump-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .pump-card {
-      position: relative;
-      background: #111;
-      border: 1px solid #1e1e1e;
-      border-radius: 16px;
-      padding: 16px 12px 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    .pump-card.running {
-      border-color: #f0c060;
-      box-shadow: 0 0 24px rgba(240, 192, 96, 0.12);
-    }
-
-    .pump-number {
-      font-size: 0.6rem;
-      letter-spacing: 2px;
-      color: #333;
-      text-transform: uppercase;
-    }
-
-    .pump-label {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #666;
-      text-align: center;
-      min-height: 1.2em;
-      transition: color 0.3s;
-      cursor: pointer;
-      border-bottom: 1px dashed transparent;
-      padding: 2px 4px;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .pump-label:hover { border-bottom-color: #333; }
-
-    .pump-label.empty {
-      color: #3a3a3a;
-      font-style: italic;
-      font-weight: 400;
-    }
-
-    .pump-card.running .pump-label {
-      color: #f0c060;
-    }
-
-    .pump-label-input {
-      width: 100%;
-      background: #1a1a1a;
-      border: 1px solid #f0c060;
-      border-radius: 8px;
-      color: #f0f0f0;
-      font-size: 0.85rem;
-      font-family: inherit;
-      text-align: center;
-      padding: 3px 4px;
-      outline: none;
-    }
-
-    .run-btn {
-      width: 100%;
-      padding: 9px 0;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      background: transparent;
-      color: #555;
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .run-btn:hover { border-color: #f0c060; color: #f0c060; }
-    .run-btn:active { background: rgba(240, 192, 96, 0.08); }
-
-    .pump-card.running .run-btn {
-      border-color: #f0c060;
-      color: #f0c060;
-      animation: pulse 1.2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .controls {
-      max-width: 480px;
-      margin: 16px auto 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .duration-row {
-      background: #111;
-      border: 1px solid #1e1e1e;
-      border-radius: 16px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .duration-label {
-      font-size: 0.6rem;
-      letter-spacing: 2px;
-      color: #444;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    input[type="range"] {
-      flex: 1;
-      -webkit-appearance: none;
-      height: 2px;
-      background: #2a2a2a;
-      border-radius: 2px;
-      outline: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #f0c060;
-      cursor: pointer;
-    }
-
-    .duration-value {
-      font-size: 0.85rem;
-      color: #f0c060;
-      min-width: 32px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .stop-btn {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #2a2a2a;
-      border-radius: 16px;
-      background: transparent;
-      color: #444;
-      font-size: 0.65rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .stop-btn:hover { border-color: #c04040; color: #c04040; }
-    .stop-btn:active { background: rgba(192, 64, 64, 0.08); }
-
-    .menu {
-      max-width: 480px;
-      margin: 40px auto 0;
-    }
-
-    .menu-title {
-      font-size: 0.65rem;
-      letter-spacing: 3px;
-      color: #444;
-      text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
-    .search-box {
-      width: 100%;
-      padding: 13px 16px;
-      background: #111;
-      border: 1px solid #1e1e1e;
-      border-radius: 14px;
-      color: #f0f0f0;
-      font-size: 0.95rem;
-      font-family: inherit;
-      outline: none;
-      margin-bottom: 14px;
-      transition: border-color 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .search-box::placeholder { color: #444; }
-    .search-box:focus { border-color: #f0c060; }
-
-    .drink-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .drink-card {
-      background: #111;
-      border: 1px solid #1e1e1e;
-      border-radius: 14px;
-      padding: 14px 16px;
-    }
-
-    .drink-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 10px;
-    }
-
-    .drink-name {
-      font-size: 1rem;
-      font-weight: 500;
-      color: #f0f0f0;
-    }
-
-    .drink-category {
-      font-size: 0.55rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #f0c060;
-      white-space: nowrap;
-    }
-
-    .drink-ingredients {
-      font-size: 0.78rem;
-      color: #666;
-      margin-top: 6px;
-      line-height: 1.5;
-    }
-
-    .drink-garnish {
-      font-size: 0.68rem;
-      color: #3f3f3f;
-      font-style: italic;
-      margin-top: 4px;
-    }
-
-    .menu-empty {
-      text-align: center;
-      color: #3a3a3a;
-      font-size: 0.85rem;
-      padding: 24px 0;
-    }
-
-    /* Ingredient combobox */
-    .combo-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 8px;
-      right: 8px;
-      margin-top: 4px;
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      max-height: 180px;
-      overflow-y: auto;
-      z-index: 20;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-    }
-
-    .combo-option {
-      padding: 9px 12px;
-      font-size: 0.8rem;
-      color: #aaa;
-      cursor: pointer;
-      border-bottom: 1px solid #1e1e1e;
-    }
-
-    .combo-option:last-child { border-bottom: none; }
-    .combo-option:hover,
-    .combo-option.active { background: rgba(240, 192, 96, 0.12); color: #f0c060; }
-
-    .combo-option.custom { color: #777; font-style: italic; }
-
-    /* Menu toggle */
-    .menu-toggle {
-      display: flex;
-      gap: 6px;
-      background: #111;
-      border: 1px solid #1e1e1e;
-      border-radius: 12px;
-      padding: 4px;
-      margin-bottom: 14px;
-    }
-
-    .toggle-btn {
-      flex: 1;
-      padding: 9px 0;
-      border: none;
-      border-radius: 9px;
-      background: transparent;
-      color: #555;
-      font-size: 0.62rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .toggle-btn.active { background: rgba(240, 192, 96, 0.14); color: #f0c060; }
-
-    /* Drink availability */
-    .drink-card.available { border-color: rgba(240, 192, 96, 0.45); }
-    .drink-card.unavailable { opacity: 0.45; }
-
-    .drink-missing {
-      font-size: 0.68rem;
-      color: #c08050;
-      margin-top: 5px;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
 
 <header>
   <h1>Drink Machine</h1>
-  <div class="subtitle">Tap a label to assign an ingredient</div>
+  <div class="subtitle">Tap a pump to assign an ingredient</div>
 </header>
 
 <div class="pump-grid" id="pump-grid"></div>
-
-<div class="controls">
-  <div class="duration-row">
-    <span class="duration-label">Duration</span>
-    <input type="range" id="duration" min="1" max="15" value="3" step="0.5"
-           oninput="durDisplay.textContent = this.value + 's'">
-    <span class="duration-value" id="durDisplay">3s</span>
-  </div>
-  <button class="stop-btn" onclick="stopAll()">Stop All</button>
-</div>
 
 <div class="menu">
   <div class="menu-title">Drink Menu</div>
@@ -393,6 +27,18 @@
   <div class="drink-list" id="drink-list"></div>
 </div>
 
+<div class="nav">
+  <a class="nav-link" href="/test">Hardware Test &rsaquo;</a>
+</div>
+
+<div class="modal-backdrop" id="modal" onclick="onModalClick(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeDrink()" aria-label="Close">&times;</button>
+    <div class="modal-art" id="modal-art"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
 <script>
   const running = new Set();
   const editing = new Set();
@@ -400,6 +46,7 @@
   let vocab = [];
   let menuMode = 'all';
   let lastAssignSig = '';
+  let allDrinks = [];
 
   function escapeHtml(s) {
     return s.replace(/[&<>"']/g, c => (
@@ -416,7 +63,6 @@
       card.innerHTML = `
         <div class="pump-number">Pump ${i}</div>
         <div class="pump-label empty" id="label-${i}" onclick="editLabel(${i})">Tap to assign</div>
-        <button class="run-btn" onclick="runPump(${i})">Run</button>
       `;
       grid.appendChild(card);
     }
@@ -450,12 +96,7 @@
     dropdown.className = 'combo-dropdown';
 
     let committed = false;
-    const commit = async (value) => {
-      if (committed || !editing.has(id)) return;
-      committed = true;
-      editing.delete(id);
-      const v = value.trim();
-      ingredients[id] = v;
+    const restoreLabel = () => {
       const fresh = document.createElement('div');
       fresh.className = 'pump-label';
       fresh.id = `label-${id}`;
@@ -463,6 +104,14 @@
       input.replaceWith(fresh);
       dropdown.remove();
       renderLabel(id);
+    };
+    const commit = async (value) => {
+      if (committed || !editing.has(id)) return;
+      committed = true;
+      editing.delete(id);
+      const v = value.trim();
+      ingredients[id] = v;
+      restoreLabel();
       renderDrinks();
       await assignPump(id, v);
     };
@@ -470,13 +119,7 @@
       if (committed || !editing.has(id)) return;
       committed = true;
       editing.delete(id);
-      const fresh = document.createElement('div');
-      fresh.className = 'pump-label';
-      fresh.id = `label-${id}`;
-      fresh.setAttribute('onclick', `editLabel(${id})`);
-      input.replaceWith(fresh);
-      dropdown.remove();
-      renderLabel(id);
+      restoreLabel();
     };
 
     let activeIndex = -1;
@@ -540,24 +183,6 @@
     } catch {}
   }
 
-  async function runPump(id) {
-    const seconds = parseFloat(document.getElementById('duration').value);
-    const res = await fetch(`/api/pump/${id}/run`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ seconds }),
-    });
-    if (res.ok) {
-      setRunning(id, true);
-      setTimeout(() => setRunning(id, false), seconds * 1000);
-    }
-  }
-
-  async function stopAll() {
-    await fetch('/api/stop', { method: 'POST' });
-    [...running].forEach(id => setRunning(id, false));
-  }
-
   function setRunning(id, state) {
     const card = document.getElementById(`pump-${id}`);
     if (!card) return;
@@ -584,8 +209,6 @@
       }
     } catch {}
   }
-
-  let allDrinks = [];
 
   async function loadDrinks() {
     try {
@@ -655,9 +278,9 @@
         : '';
       const stateClass = avail.size ? (d.available ? ' available' : ' unavailable') : '';
       return `
-        <div class="drink-card${stateClass}">
+        <div class="drink-card${stateClass}" onclick="openDrink('${d.id}')">
           <div class="drink-head">
-            <span class="drink-name">${escapeHtml(d.name)}</span>
+            <span class="drink-name">${escapeHtml(d.name)}<span class="drink-chevron">&rsaquo;</span></span>
             <span class="drink-category">${escapeHtml(d.category)}</span>
           </div>
           <div class="drink-ingredients">${ings}</div>
@@ -666,6 +289,136 @@
         </div>`;
     }).join('');
   }
+
+  function lighten(hex, amt) {
+    const n = parseInt(hex.slice(1), 16);
+    let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    r = Math.round(r + (255 - r) * amt);
+    g = Math.round(g + (255 - g) * amt);
+    b = Math.round(b + (255 - b) * amt);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function widthAt(y, top, bot, topW, botW) {
+    const t = (y - top) / (bot - top);
+    return topW + (botW - topW) * t;
+  }
+
+  function glassSVG(glass, color) {
+    const light = lighten(color, 0.35);
+    const stroke = '#e8e8e8';
+    const defs = `<defs>
+      <radialGradient id="liq" cx="50%" cy="30%" r="80%">
+        <stop offset="0%" stop-color="${light}"/>
+        <stop offset="100%" stop-color="${color}"/>
+      </radialGradient>
+    </defs>`;
+    const c = 100;
+    let inner = '';
+
+    if (glass === 'highball' || glass === 'rocks') {
+      const geo = glass === 'highball'
+        ? { topW: 64, botW: 58, top: 22, bot: 232, fill: 0.8 }
+        : { topW: 96, botW: 82, top: 96, bot: 224, fill: 0.6 };
+      const tH = geo.topW / 2, bH = geo.botW / 2;
+      const yf = geo.bot - (geo.bot - geo.top) * geo.fill;
+      const wfH = widthAt(yf, geo.top, geo.bot, geo.topW, geo.botW) / 2;
+      const glassPts = `${c - tH},${geo.top} ${c + tH},${geo.top} ${c + bH},${geo.bot} ${c - bH},${geo.bot}`;
+      const liqPts = `${c - wfH},${yf} ${c + wfH},${yf} ${c + bH},${geo.bot} ${c - bH},${geo.bot}`;
+      inner = `
+        <polygon points="${liqPts}" fill="url(#liq)"/>
+        <ellipse cx="${c}" cy="${yf}" rx="${wfH}" ry="6" fill="${light}" opacity="0.9"/>
+        <polygon points="${glassPts}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linejoin="round" opacity="0.8"/>
+        <ellipse cx="${c}" cy="${geo.top}" rx="${tH}" ry="7" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
+        <line x1="${c - tH + 8}" y1="${geo.top + 16}" x2="${c - bH + 6}" y2="${geo.bot - 16}" stroke="#fff" stroke-width="4" opacity="0.1" stroke-linecap="round"/>`;
+    } else {
+      const rimY = 40, footY = 244;
+      const apexY = glass === 'margarita' ? 112 : 122;
+      const half = glass === 'margarita' ? 78 : 62;
+      let bowlPath, liqPts, surfaceY, surfaceHalf;
+
+      if (glass === 'margarita') {
+        const nb = 14;
+        bowlPath = `M ${c - half},${rimY} Q ${c - half + 6},${rimY + 28} ${c - nb},${apexY} L ${c + nb},${apexY} Q ${c + half - 6},${rimY + 28} ${c + half},${rimY}`;
+        const fill = 0.78;
+        surfaceY = rimY + (apexY - rimY) * (1 - fill);
+        surfaceHalf = widthAt(surfaceY, rimY, apexY, half, nb);
+        liqPts = `${c - surfaceHalf},${surfaceY} ${c + surfaceHalf},${surfaceY} ${c + nb},${apexY} ${c - nb},${apexY}`;
+      } else {
+        bowlPath = `M ${c - half},${rimY} L ${c},${apexY} L ${c + half},${rimY}`;
+        const fill = 0.7;
+        surfaceY = apexY - (apexY - rimY) * fill;
+        surfaceHalf = half * fill;
+        liqPts = `${c - surfaceHalf},${surfaceY} ${c + surfaceHalf},${surfaceY} ${c},${apexY}`;
+      }
+
+      inner = `
+        <polygon points="${liqPts}" fill="url(#liq)"/>
+        <ellipse cx="${c}" cy="${surfaceY}" rx="${surfaceHalf}" ry="6" fill="${light}" opacity="0.9"/>
+        <path d="${bowlPath}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linejoin="round" opacity="0.8"/>
+        <ellipse cx="${c}" cy="${rimY}" rx="${half}" ry="8" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
+        <line x1="${c}" y1="${apexY}" x2="${c}" y2="${footY - 8}" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
+        <ellipse cx="${c}" cy="${footY}" rx="38" ry="7" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>`;
+    }
+
+    return `<svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">${defs}${inner}</svg>`;
+  }
+
+  function openDrink(id) {
+    const d = allDrinks.find(x => x.id === id);
+    if (!d) return;
+    const avail = availableSet();
+    const missing = d.ingredients
+      .filter(i => !avail.has(i.name.trim().toLowerCase()))
+      .map(i => i.name);
+    const makeable = missing.length === 0;
+
+    document.getElementById('modal-art').innerHTML = glassSVG(d.glass, d.color);
+
+    const ingHtml = d.ingredients.map(i => {
+      const miss = avail.size && !avail.has(i.name.trim().toLowerCase());
+      return `<div class="modal-ingredient${miss ? ' missing' : ''}">
+        <span class="name">${escapeHtml(i.name)}</span><span class="ml">${i.ml} ml</span>
+      </div>`;
+    }).join('');
+
+    let availHtml = '';
+    if (avail.size) {
+      availHtml = makeable
+        ? '<div class="modal-availability yes">&#10003; You can make this now</div>'
+        : `<div class="modal-availability no">Missing ${missing.length} ingredient${missing.length > 1 ? 's' : ''}</div>`;
+    }
+
+    const garnish = d.garnish
+      ? `<div class="modal-garnish"><span>Garnish &middot; </span>${escapeHtml(d.garnish)}</div>`
+      : '';
+
+    document.getElementById('modal-body').innerHTML = `
+      <div class="modal-cat">${escapeHtml(d.category)}</div>
+      <h2 class="modal-name">${escapeHtml(d.name)}</h2>
+      ${availHtml}
+      <div class="modal-section-title">Recipe</div>
+      ${ingHtml}
+      ${garnish}
+      <div class="modal-section-title">History</div>
+      <div class="modal-history">${escapeHtml(d.history || '')}</div>`;
+
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrink() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function onModalClick(e) {
+    if (e.target.id === 'modal') closeDrink();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrink();
+  });
 
   buildGrid();
   loadVocab();

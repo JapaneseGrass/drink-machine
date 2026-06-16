@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Drink Machine — Hardware Test</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<header>
+  <h1>Hardware Test</h1>
+  <div class="subtitle">Run pumps &middot; troubleshoot wiring</div>
+</header>
+
+<div class="pump-grid" id="pump-grid"></div>
+
+<div class="controls">
+  <div class="duration-row">
+    <span class="duration-label">Duration</span>
+    <input type="range" id="duration" min="1" max="15" value="3" step="0.5"
+           oninput="durDisplay.textContent = this.value + 's'">
+    <span class="duration-value" id="durDisplay">3s</span>
+  </div>
+  <button class="stop-btn" onclick="stopAll()">Stop All</button>
+</div>
+
+<div class="nav">
+  <a class="nav-link" href="/">&rsaquo; Back to Drinks</a>
+</div>
+
+<script>
+  const running = new Set();
+  const ingredients = {};
+
+  function buildGrid() {
+    const grid = document.getElementById('pump-grid');
+    for (let i = 1; i <= 8; i++) {
+      const card = document.createElement('div');
+      card.className = 'pump-card';
+      card.id = `pump-${i}`;
+      card.innerHTML = `
+        <div class="pump-number">Pump ${i}</div>
+        <div class="pump-label readonly empty" id="label-${i}">Unassigned</div>
+        <button class="run-btn" onclick="runPump(${i})">Run</button>
+      `;
+      grid.appendChild(card);
+    }
+  }
+
+  function renderLabel(id) {
+    const label = document.getElementById(`label-${id}`);
+    if (!label) return;
+    const name = ingredients[id] || '';
+    label.textContent = name || 'Unassigned';
+    label.classList.toggle('empty', !name);
+  }
+
+  function setRunning(id, state) {
+    const card = document.getElementById(`pump-${id}`);
+    if (!card) return;
+    state ? running.add(id) : running.delete(id);
+    card.classList.toggle('running', state);
+  }
+
+  async function runPump(id) {
+    const seconds = parseFloat(document.getElementById('duration').value);
+    const res = await fetch(`/api/pump/${id}/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ seconds }),
+    });
+    if (res.ok) {
+      setRunning(id, true);
+      setTimeout(() => setRunning(id, false), seconds * 1000);
+    }
+  }
+
+  async function stopAll() {
+    await fetch('/api/stop', { method: 'POST' });
+    [...running].forEach(id => setRunning(id, false));
+  }
+
+  async function pollStatus() {
+    try {
+      const data = await fetch('/api/status').then(r => r.json());
+      for (const [id, info] of Object.entries(data.pumps)) {
+        const pumpId = parseInt(id);
+        setRunning(pumpId, info.running);
+        ingredients[pumpId] = info.ingredient || '';
+        renderLabel(pumpId);
+      }
+    } catch {}
+  }
+
+  buildGrid();
+  pollStatus();
+  setInterval(pollStatus, 2000);
+</script>
+</body>
+</html>
