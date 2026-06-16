@@ -69,6 +69,13 @@ def drinks(q: str = ""):
     return {"count": len(results), "drinks": results}
 
 
+@app.get("/api/drinks/available")
+def available_drinks():
+    assigned = [v for v in storage.get_assignments().values() if v.strip()]
+    makeable = [d for d in recipes.annotate_availability(assigned) if d["available"]]
+    return {"count": len(makeable), "drinks": makeable}
+
+
 @app.get("/api/ingredients")
 def ingredients():
     return {"ingredients": recipes.ingredient_vocabulary()}

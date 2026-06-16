@@ -45,6 +45,7 @@
     }
 
     .pump-card {
+      position: relative;
       background: #111;
       border: 1px solid #1e1e1e;
       border-radius: 16px;
@@ -291,6 +292,74 @@
       font-size: 0.85rem;
       padding: 24px 0;
     }
+
+    /* Ingredient combobox */
+    .combo-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 8px;
+      right: 8px;
+      margin-top: 4px;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+      z-index: 20;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    .combo-option {
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      color: #aaa;
+      cursor: pointer;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    .combo-option:last-child { border-bottom: none; }
+    .combo-option:hover,
+    .combo-option.active { background: rgba(240, 192, 96, 0.12); color: #f0c060; }
+
+    .combo-option.custom { color: #777; font-style: italic; }
+
+    /* Menu toggle */
+    .menu-toggle {
+      display: flex;
+      gap: 6px;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 14px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 9px 0;
+      border: none;
+      border-radius: 9px;
+      background: transparent;
+      color: #555;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .toggle-btn.active { background: rgba(240, 192, 96, 0.14); color: #f0c060; }
+
+    /* Drink availability */
+    .drink-card.available { border-color: rgba(240, 192, 96, 0.45); }
+    .drink-card.unavailable { opacity: 0.45; }
+
+    .drink-missing {
+      font-size: 0.68rem;
+      color: #c08050;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -317,6 +386,10 @@
   <input type="text" class="search-box" id="search"
          placeholder="Search drinks or ingredients..."
          oninput="renderDrinks()" autocomplete="off">
+  <div class="menu-toggle">
+    <button class="toggle-btn active" id="toggle-all" onclick="setMode('all')">All Drinks</button>
+    <button class="toggle-btn" id="toggle-make" onclick="setMode('make')">Can Make</button>
+  </div>
   <div class="drink-list" id="drink-list"></div>
 </div>
 
@@ -324,6 +397,15 @@
   const running = new Set();
   const editing = new Set();
   const ingredients = {};
+  let vocab = [];
+  let menuMode = 'all';
+  let lastAssignSig = '';
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
 
   function buildGrid() {
     const grid = document.getElementById('pump-grid');
@@ -352,38 +434,98 @@
   function editLabel(id) {
     if (editing.has(id)) return;
     editing.add(id);
+    const card = document.getElementById(`pump-${id}`);
     const label = document.getElementById(`label-${id}`);
     const current = ingredients[id] || '';
+
     const input = document.createElement('input');
     input.className = 'pump-label-input';
     input.type = 'text';
     input.value = current;
-    input.placeholder = 'e.g. Vodka';
+    input.placeholder = 'Search ingredient...';
     input.maxLength = 24;
+    input.autocomplete = 'off';
 
-    const finish = async (save) => {
-      if (!editing.has(id)) return;
+    const dropdown = document.createElement('div');
+    dropdown.className = 'combo-dropdown';
+
+    let committed = false;
+    const commit = async (value) => {
+      if (committed || !editing.has(id)) return;
+      committed = true;
       editing.delete(id);
-      if (save) {
-        const value = input.value.trim();
-        ingredients[id] = value;
-        await assignPump(id, value);
-      }
+      const v = value.trim();
+      ingredients[id] = v;
       const fresh = document.createElement('div');
       fresh.className = 'pump-label';
       fresh.id = `label-${id}`;
       fresh.setAttribute('onclick', `editLabel(${id})`);
       input.replaceWith(fresh);
+      dropdown.remove();
+      renderLabel(id);
+      renderDrinks();
+      await assignPump(id, v);
+    };
+    const cancel = () => {
+      if (committed || !editing.has(id)) return;
+      committed = true;
+      editing.delete(id);
+      const fresh = document.createElement('div');
+      fresh.className = 'pump-label';
+      fresh.id = `label-${id}`;
+      fresh.setAttribute('onclick', `editLabel(${id})`);
+      input.replaceWith(fresh);
+      dropdown.remove();
       renderLabel(id);
     };
 
+    let activeIndex = -1;
+    let options = [];
+
+    const renderOptions = () => {
+      const q = input.value.trim().toLowerCase();
+      let matches = vocab.filter(name => name.toLowerCase().includes(q));
+      const exact = vocab.some(name => name.toLowerCase() === q);
+      options = matches.slice();
+      let html = matches
+        .map((name, i) => `<div class="combo-option" data-i="${i}">${escapeHtml(name)}</div>`)
+        .join('');
+      // Allow committing a custom value not in the vocabulary
+      if (q && !exact) {
+        options.push(input.value.trim());
+        html += `<div class="combo-option custom" data-i="${matches.length}">Use "${escapeHtml(input.value.trim())}"</div>`;
+      }
+      dropdown.innerHTML = html || '<div class="combo-option custom">No matches</div>';
+      activeIndex = -1;
+      dropdown.querySelectorAll('.combo-option[data-i]').forEach(el => {
+        el.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          commit(options[parseInt(el.dataset.i)]);
+        });
+      });
+    };
+
+    const setActive = (idx) => {
+      const els = dropdown.querySelectorAll('.combo-option[data-i]');
+      if (!els.length) return;
+      activeIndex = (idx + els.length) % els.length;
+      els.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+    };
+
+    input.addEventListener('input', renderOptions);
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') input.blur();
-      else if (e.key === 'Escape') finish(false);
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActive(activeIndex + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(activeIndex - 1); }
+      else if (e.key === 'Enter') {
+        e.preventDefault();
+        commit(activeIndex >= 0 ? options[activeIndex] : input.value);
+      } else if (e.key === 'Escape') { cancel(); }
     });
-    input.addEventListener('blur', () => finish(true));
+    input.addEventListener('blur', () => setTimeout(() => commit(input.value), 120));
 
     label.replaceWith(input);
+    card.appendChild(dropdown);
+    renderOptions();
     input.focus();
     input.select();
   }
@@ -429,8 +571,16 @@
       for (const [id, info] of Object.entries(data.pumps)) {
         const pumpId = parseInt(id);
         setRunning(pumpId, info.running);
-        ingredients[pumpId] = info.ingredient || '';
-        renderLabel(pumpId);
+        if (!editing.has(pumpId)) {
+          ingredients[pumpId] = info.ingredient || '';
+          renderLabel(pumpId);
+        }
+      }
+      const sig = Object.keys(ingredients).sort()
+        .map(k => `${k}:${ingredients[k]}`).join('|');
+      if (sig !== lastAssignSig) {
+        lastAssignSig = sig;
+        renderDrinks();
       }
     } catch {}
   }
@@ -445,6 +595,13 @@
     } catch {}
   }
 
+  async function loadVocab() {
+    try {
+      const data = await fetch('/api/ingredients').then(r => r.json());
+      vocab = data.ingredients || [];
+    } catch {}
+  }
+
   function drinkMatches(drink, q) {
     if (!q) return true;
     if (drink.name.toLowerCase().includes(q)) return true;
@@ -452,34 +609,68 @@
     return drink.ingredients.some(i => i.name.toLowerCase().includes(q));
   }
 
+  function availableSet() {
+    return new Set(
+      Object.values(ingredients)
+        .filter(v => v && v.trim())
+        .map(v => v.trim().toLowerCase())
+    );
+  }
+
+  function setMode(mode) {
+    menuMode = mode;
+    document.getElementById('toggle-all').classList.toggle('active', mode === 'all');
+    document.getElementById('toggle-make').classList.toggle('active', mode === 'make');
+    renderDrinks();
+  }
+
   function renderDrinks() {
     const q = document.getElementById('search').value.trim().toLowerCase();
     const list = document.getElementById('drink-list');
-    const matches = allDrinks.filter(d => drinkMatches(d, q));
+    const avail = availableSet();
 
-    if (matches.length === 0) {
-      list.innerHTML = '<div class="menu-empty">No drinks match your search.</div>';
+    let drinks = allDrinks.map(d => {
+      const missing = d.ingredients
+        .filter(i => !avail.has(i.name.trim().toLowerCase()))
+        .map(i => i.name);
+      return { ...d, available: missing.length === 0, missing };
+    });
+
+    drinks = drinks.filter(d => drinkMatches(d, q));
+    if (menuMode === 'make') drinks = drinks.filter(d => d.available);
+
+    if (drinks.length === 0) {
+      const msg = menuMode === 'make'
+        ? 'No drinks available yet — assign ingredients to your pumps.'
+        : 'No drinks match your search.';
+      list.innerHTML = `<div class="menu-empty">${msg}</div>`;
       return;
     }
 
-    list.innerHTML = matches.map(d => {
-      const ings = d.ingredients.map(i => `${i.name} (${i.ml}ml)`).join(' · ');
-      const garnish = d.garnish ? `<div class="drink-garnish">${d.garnish}</div>` : '';
+    list.innerHTML = drinks.map(d => {
+      const ings = d.ingredients.map(i => `${escapeHtml(i.name)} (${i.ml}ml)`).join(' · ');
+      const garnish = d.garnish ? `<div class="drink-garnish">${escapeHtml(d.garnish)}</div>` : '';
+      const missing = (!d.available && d.missing.length)
+        ? `<div class="drink-missing">Missing: ${d.missing.map(escapeHtml).join(', ')}</div>`
+        : '';
+      const stateClass = avail.size ? (d.available ? ' available' : ' unavailable') : '';
       return `
-        <div class="drink-card">
+        <div class="drink-card${stateClass}">
           <div class="drink-head">
-            <span class="drink-name">${d.name}</span>
-            <span class="drink-category">${d.category}</span>
+            <span class="drink-name">${escapeHtml(d.name)}</span>
+            <span class="drink-category">${escapeHtml(d.category)}</span>
           </div>
           <div class="drink-ingredients">${ings}</div>
+          ${missing}
           ${garnish}
         </div>`;
     }).join('');
   }
 
   buildGrid();
-  pollStatus();
+  loadVocab();
   loadDrinks();
+  pollStatus();
   setInterval(pollStatus, 2000);
 </script>
 </body>

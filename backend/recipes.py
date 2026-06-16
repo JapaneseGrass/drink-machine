@@ -30,3 +30,20 @@ def ingredient_vocabulary() -> list[str]:
     """Every distinct ingredient used across all recipes, sorted."""
     names = {ing["name"] for recipe in _RECIPES for ing in recipe["ingredients"]}
     return sorted(names)
+
+
+def annotate_availability(available_names: list[str]) -> list[dict]:
+    """Tag each recipe with whether it can be made from the available ingredients.
+
+    Matching is case-insensitive and ignores surrounding whitespace.
+    """
+    available = {name.strip().lower() for name in available_names if name.strip()}
+    annotated = []
+    for recipe in _RECIPES:
+        missing = [
+            ing["name"]
+            for ing in recipe["ingredients"]
+            if ing["name"].strip().lower() not in available
+        ]
+        annotated.append({**recipe, "available": not missing, "missing": missing})
+    return annotated
