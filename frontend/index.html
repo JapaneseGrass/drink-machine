@@ -279,10 +279,9 @@
       const stateClass = avail.size ? (d.available ? ' available' : ' unavailable') : '';
       return `
         <div class="drink-card${stateClass}" onclick="openDrink('${d.id}')">
-          <div class="drink-head">
-            <span class="drink-name">${escapeHtml(d.name)}<span class="drink-chevron">&rsaquo;</span></span>
-            <span class="drink-category">${escapeHtml(d.category)}</span>
-          </div>
+          <div class="drink-art">${glassSVG(d.glass, d.color)}</div>
+          <div class="drink-category">${escapeHtml(d.category)}</div>
+          <div class="drink-name">${escapeHtml(d.name)}</div>
           <div class="drink-ingredients">${ings}</div>
           ${missing}
           ${garnish}
@@ -304,11 +303,13 @@
     return topW + (botW - topW) * t;
   }
 
+  let svgUid = 0;
   function glassSVG(glass, color) {
     const light = lighten(color, 0.35);
     const stroke = '#e8e8e8';
+    const gid = `liq${svgUid++}`;
     const defs = `<defs>
-      <radialGradient id="liq" cx="50%" cy="30%" r="80%">
+      <radialGradient id="${gid}" cx="50%" cy="30%" r="80%">
         <stop offset="0%" stop-color="${light}"/>
         <stop offset="100%" stop-color="${color}"/>
       </radialGradient>
@@ -326,7 +327,7 @@
       const glassPts = `${c - tH},${geo.top} ${c + tH},${geo.top} ${c + bH},${geo.bot} ${c - bH},${geo.bot}`;
       const liqPts = `${c - wfH},${yf} ${c + wfH},${yf} ${c + bH},${geo.bot} ${c - bH},${geo.bot}`;
       inner = `
-        <polygon points="${liqPts}" fill="url(#liq)"/>
+        <polygon points="${liqPts}" fill="url(#${gid})"/>
         <ellipse cx="${c}" cy="${yf}" rx="${wfH}" ry="6" fill="${light}" opacity="0.9"/>
         <polygon points="${glassPts}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linejoin="round" opacity="0.8"/>
         <ellipse cx="${c}" cy="${geo.top}" rx="${tH}" ry="7" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
@@ -353,7 +354,7 @@
       }
 
       inner = `
-        <polygon points="${liqPts}" fill="url(#liq)"/>
+        <polygon points="${liqPts}" fill="url(#${gid})"/>
         <ellipse cx="${c}" cy="${surfaceY}" rx="${surfaceHalf}" ry="6" fill="${light}" opacity="0.9"/>
         <path d="${bowlPath}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linejoin="round" opacity="0.8"/>
         <ellipse cx="${c}" cy="${rimY}" rx="${half}" ry="8" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
