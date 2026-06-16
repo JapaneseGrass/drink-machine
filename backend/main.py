@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import recipes
 import storage
 from pumps import PumpController
 
@@ -60,6 +61,17 @@ def assign_pump(pump_id: int, req: AssignRequest):
         raise HTTPException(400, "Pump ID must be 1–8")
     storage.set_assignment(pump_id, req.ingredient)
     return {"status": "ok", "pump": pump_id, "ingredient": req.ingredient.strip()}
+
+
+@app.get("/api/drinks")
+def drinks(q: str = ""):
+    results = recipes.search(q)
+    return {"count": len(results), "drinks": results}
+
+
+@app.get("/api/ingredients")
+def ingredients():
+    return {"ingredients": recipes.ingredient_vocabulary()}
 
 
 @app.get("/api/status")

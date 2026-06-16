@@ -1,0 +1,318 @@
+[
+  {
+    "id": "margarita",
+    "name": "Margarita",
+    "category": "Tequila",
+    "ingredients": [
+      { "name": "Tequila", "ml": 50 },
+      { "name": "Triple Sec", "ml": 25 },
+      { "name": "Lime Juice", "ml": 25 }
+    ],
+    "garnish": "Salt rim, lime wheel"
+  },
+  {
+    "id": "paloma",
+    "name": "Paloma",
+    "category": "Tequila",
+    "ingredients": [
+      { "name": "Tequila", "ml": 50 },
+      { "name": "Grapefruit Soda", "ml": 100 },
+      { "name": "Lime Juice", "ml": 15 }
+    ],
+    "garnish": "Salt rim, lime wedge"
+  },
+  {
+    "id": "ranch-water",
+    "name": "Ranch Water",
+    "category": "Tequila",
+    "ingredients": [
+      { "name": "Tequila", "ml": 50 },
+      { "name": "Lime Juice", "ml": 15 },
+      { "name": "Soda Water", "ml": 120 }
+    ],
+    "garnish": "Lime wedge (Topo Chico, El Paso style)"
+  },
+  {
+    "id": "tequila-sunrise",
+    "name": "Tequila Sunrise",
+    "category": "Tequila",
+    "ingredients": [
+      { "name": "Tequila", "ml": 45 },
+      { "name": "Orange Juice", "ml": 120 },
+      { "name": "Grenadine", "ml": 15 }
+    ],
+    "garnish": "Orange slice, cherry"
+  },
+  {
+    "id": "tequila-soda",
+    "name": "Tequila Soda",
+    "category": "Tequila",
+    "ingredients": [
+      { "name": "Tequila", "ml": 45 },
+      { "name": "Soda Water", "ml": 120 },
+      { "name": "Lime Juice", "ml": 10 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "mexican-mule",
+    "name": "Mexican Mule",
+    "category": "Tequila",
+    "ingredients": [
+      { "name": "Tequila", "ml": 50 },
+      { "name": "Ginger Beer", "ml": 120 },
+      { "name": "Lime Juice", "ml": 15 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "cape-codder",
+    "name": "Vodka Cranberry",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Cranberry Juice", "ml": 120 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "screwdriver",
+    "name": "Screwdriver",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Orange Juice", "ml": 120 }
+    ],
+    "garnish": "Orange slice"
+  },
+  {
+    "id": "vodka-soda",
+    "name": "Vodka Soda",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Soda Water", "ml": 120 },
+      { "name": "Lime Juice", "ml": 10 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "vodka-tonic",
+    "name": "Vodka Tonic",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Tonic Water", "ml": 120 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "cosmopolitan",
+    "name": "Cosmopolitan",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Triple Sec", "ml": 15 },
+      { "name": "Cranberry Juice", "ml": 30 },
+      { "name": "Lime Juice", "ml": 15 }
+    ],
+    "garnish": "Lime wheel"
+  },
+  {
+    "id": "sea-breeze",
+    "name": "Sea Breeze",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Cranberry Juice", "ml": 90 },
+      { "name": "Grapefruit Juice", "ml": 30 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "bay-breeze",
+    "name": "Bay Breeze",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Cranberry Juice", "ml": 60 },
+      { "name": "Pineapple Juice", "ml": 60 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "greyhound",
+    "name": "Greyhound",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Grapefruit Juice", "ml": 120 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "madras",
+    "name": "Madras",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Cranberry Juice", "ml": 90 },
+      { "name": "Orange Juice", "ml": 30 }
+    ],
+    "garnish": "Orange slice"
+  },
+  {
+    "id": "moscow-mule",
+    "name": "Moscow Mule",
+    "category": "Vodka",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Ginger Beer", "ml": 120 },
+      { "name": "Lime Juice", "ml": 15 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "gin-tonic",
+    "name": "Gin and Tonic",
+    "category": "Gin",
+    "ingredients": [
+      { "name": "Gin", "ml": 45 },
+      { "name": "Tonic Water", "ml": 120 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "tom-collins",
+    "name": "Tom Collins",
+    "category": "Gin",
+    "ingredients": [
+      { "name": "Gin", "ml": 45 },
+      { "name": "Lemon Juice", "ml": 30 },
+      { "name": "Simple Syrup", "ml": 15 },
+      { "name": "Soda Water", "ml": 90 }
+    ],
+    "garnish": "Lemon slice, cherry"
+  },
+  {
+    "id": "gin-rickey",
+    "name": "Gin Rickey",
+    "category": "Gin",
+    "ingredients": [
+      { "name": "Gin", "ml": 45 },
+      { "name": "Lime Juice", "ml": 20 },
+      { "name": "Soda Water", "ml": 90 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "cuba-libre",
+    "name": "Cuba Libre",
+    "category": "Rum",
+    "ingredients": [
+      { "name": "White Rum", "ml": 45 },
+      { "name": "Cola", "ml": 120 },
+      { "name": "Lime Juice", "ml": 10 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "daiquiri",
+    "name": "Daiquiri",
+    "category": "Rum",
+    "ingredients": [
+      { "name": "White Rum", "ml": 50 },
+      { "name": "Lime Juice", "ml": 25 },
+      { "name": "Simple Syrup", "ml": 15 }
+    ],
+    "garnish": "Lime wheel"
+  },
+  {
+    "id": "pina-colada",
+    "name": "Pina Colada",
+    "category": "Rum",
+    "ingredients": [
+      { "name": "White Rum", "ml": 45 },
+      { "name": "Pineapple Juice", "ml": 90 },
+      { "name": "Coconut Cream", "ml": 30 }
+    ],
+    "garnish": "Pineapple wedge, cherry"
+  },
+  {
+    "id": "dark-and-stormy",
+    "name": "Dark and Stormy",
+    "category": "Rum",
+    "ingredients": [
+      { "name": "Dark Rum", "ml": 50 },
+      { "name": "Ginger Beer", "ml": 120 },
+      { "name": "Lime Juice", "ml": 15 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "whiskey-coke",
+    "name": "Whiskey and Coke",
+    "category": "Whiskey",
+    "ingredients": [
+      { "name": "Whiskey", "ml": 45 },
+      { "name": "Cola", "ml": 120 }
+    ],
+    "garnish": "Lime wedge (optional)"
+  },
+  {
+    "id": "whiskey-sour",
+    "name": "Whiskey Sour",
+    "category": "Whiskey",
+    "ingredients": [
+      { "name": "Whiskey", "ml": 45 },
+      { "name": "Lemon Juice", "ml": 25 },
+      { "name": "Simple Syrup", "ml": 15 }
+    ],
+    "garnish": "Cherry, orange slice"
+  },
+  {
+    "id": "jack-and-ginger",
+    "name": "Whiskey and Ginger",
+    "category": "Whiskey",
+    "ingredients": [
+      { "name": "Whiskey", "ml": 45 },
+      { "name": "Ginger Ale", "ml": 120 }
+    ],
+    "garnish": "Lime wedge"
+  },
+  {
+    "id": "long-island",
+    "name": "Long Island Iced Tea",
+    "category": "Mixed",
+    "ingredients": [
+      { "name": "Vodka", "ml": 15 },
+      { "name": "Gin", "ml": 15 },
+      { "name": "White Rum", "ml": 15 },
+      { "name": "Tequila", "ml": 15 },
+      { "name": "Triple Sec", "ml": 15 },
+      { "name": "Lemon Juice", "ml": 25 },
+      { "name": "Cola", "ml": 60 }
+    ],
+    "garnish": "Lemon wedge"
+  },
+  {
+    "id": "shirley-temple",
+    "name": "Shirley Temple",
+    "category": "Non-Alcoholic",
+    "ingredients": [
+      { "name": "Lemon-Lime Soda", "ml": 180 },
+      { "name": "Grenadine", "ml": 15 }
+    ],
+    "garnish": "Cherry"
+  },
+  {
+    "id": "roy-rogers",
+    "name": "Roy Rogers",
+    "category": "Non-Alcoholic",
+    "ingredients": [
+      { "name": "Cola", "ml": 180 },
+      { "name": "Grenadine", "ml": 15 }
+    ],
+    "garnish": "Cherry"
+  }
+]

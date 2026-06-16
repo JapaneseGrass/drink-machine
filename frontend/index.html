@@ -204,6 +204,93 @@
 
     .stop-btn:hover { border-color: #c04040; color: #c04040; }
     .stop-btn:active { background: rgba(192, 64, 64, 0.08); }
+
+    .menu {
+      max-width: 480px;
+      margin: 40px auto 0;
+    }
+
+    .menu-title {
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      color: #444;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 13px 16px;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 14px;
+      color: #f0f0f0;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .search-box::placeholder { color: #444; }
+    .search-box:focus { border-color: #f0c060; }
+
+    .drink-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .drink-card {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .drink-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .drink-name {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #f0f0f0;
+    }
+
+    .drink-category {
+      font-size: 0.55rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #f0c060;
+      white-space: nowrap;
+    }
+
+    .drink-ingredients {
+      font-size: 0.78rem;
+      color: #666;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .drink-garnish {
+      font-size: 0.68rem;
+      color: #3f3f3f;
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .menu-empty {
+      text-align: center;
+      color: #3a3a3a;
+      font-size: 0.85rem;
+      padding: 24px 0;
+    }
   </style>
 </head>
 <body>
@@ -223,6 +310,14 @@
     <span class="duration-value" id="durDisplay">3s</span>
   </div>
   <button class="stop-btn" onclick="stopAll()">Stop All</button>
+</div>
+
+<div class="menu">
+  <div class="menu-title">Drink Menu</div>
+  <input type="text" class="search-box" id="search"
+         placeholder="Search drinks or ingredients..."
+         oninput="renderDrinks()" autocomplete="off">
+  <div class="drink-list" id="drink-list"></div>
 </div>
 
 <script>
@@ -340,8 +435,51 @@
     } catch {}
   }
 
+  let allDrinks = [];
+
+  async function loadDrinks() {
+    try {
+      const data = await fetch('/api/drinks').then(r => r.json());
+      allDrinks = data.drinks;
+      renderDrinks();
+    } catch {}
+  }
+
+  function drinkMatches(drink, q) {
+    if (!q) return true;
+    if (drink.name.toLowerCase().includes(q)) return true;
+    if (drink.category.toLowerCase().includes(q)) return true;
+    return drink.ingredients.some(i => i.name.toLowerCase().includes(q));
+  }
+
+  function renderDrinks() {
+    const q = document.getElementById('search').value.trim().toLowerCase();
+    const list = document.getElementById('drink-list');
+    const matches = allDrinks.filter(d => drinkMatches(d, q));
+
+    if (matches.length === 0) {
+      list.innerHTML = '<div class="menu-empty">No drinks match your search.</div>';
+      return;
+    }
+
+    list.innerHTML = matches.map(d => {
+      const ings = d.ingredients.map(i => `${i.name} (${i.ml}ml)`).join(' · ');
+      const garnish = d.garnish ? `<div class="drink-garnish">${d.garnish}</div>` : '';
+      return `
+        <div class="drink-card">
+          <div class="drink-head">
+            <span class="drink-name">${d.name}</span>
+            <span class="drink-category">${d.category}</span>
+          </div>
+          <div class="drink-ingredients">${ings}</div>
+          ${garnish}
+        </div>`;
+    }).join('');
+  }
+
   buildGrid();
   pollStatus();
+  loadDrinks();
   setInterval(pollStatus, 2000);
 </script>
 </body>
