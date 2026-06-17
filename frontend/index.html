@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/styles.css?v=3">
 </head>
 <body>
 
@@ -37,6 +37,14 @@
     <div class="modal-art" id="modal-art"></div>
     <div class="modal-body" id="modal-body"></div>
   </div>
+</div>
+
+<div class="pour-overlay" id="pour-overlay">
+  <div class="pour-ring" id="pour-ring"></div>
+  <div class="pour-label" id="pour-label">Pouring</div>
+  <div class="pour-drink-name" id="pour-drink-name"></div>
+  <div class="pour-current" id="pour-current"></div>
+  <button class="pour-stop" onclick="stopPour()">Stop</button>
 </div>
 
 <script>
@@ -207,6 +215,7 @@
         lastAssignSig = sig;
         renderDrinks();
       }
+      updatePour(data);
     } catch {}
   }
 
@@ -394,6 +403,20 @@
       ? `<div class="modal-garnish"><span>Garnish &middot; </span>${escapeHtml(d.garnish)}</div>`
       : '';
 
+    const glassIcon =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M5 4h14l-7 8z"/><line x1="12" y1="12" x2="12" y2="20"/>' +
+      '<line x1="8" y1="20" x2="16" y2="20"/></svg>';
+    let pourBtn;
+    if (!avail.size) {
+      pourBtn = '<button class="pour-btn" disabled>Assign pumps to pour</button>';
+    } else if (makeable) {
+      pourBtn = `<button class="pour-btn" onclick="pourDrink('${d.id}')">${glassIcon}<span>Pour</span></button>`;
+    } else {
+      pourBtn = '<button class="pour-btn" disabled>Missing ingredients</button>';
+    }
+
     document.getElementById('modal-body').innerHTML = `
       <div class="modal-cat">${escapeHtml(d.category)}</div>
       <h2 class="modal-name">${escapeHtml(d.name)}</h2>
@@ -402,7 +425,8 @@
       ${ingHtml}
       ${garnish}
       <div class="modal-section-title">History</div>
-      <div class="modal-history">${escapeHtml(d.history || '')}</div>`;
+      <div class="modal-history">${escapeHtml(d.history || '')}</div>
+      ${pourBtn}`;
 
     document.getElementById('modal').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -415,6 +439,71 @@
 
   function onModalClick(e) {
     if (e.target.id === 'modal') closeDrink();
+  }
+
+  // ----- Pour flow -----
+  let pourState = 'idle';   // 'idle' | 'pouring' | 'done'
+  let pourOpenedAt = 0;
+
+  async function pourDrink(id) {
+    const res = await fetch(`/api/pour/${id}`, { method: 'POST' });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert(err.detail || 'Could not start pour.');
+      return;
+    }
+    const data = await res.json();
+    closeDrink();
+    openPour(data.drink);
+    setPourCurrent([]);
+  }
+
+  function openPour(name) {
+    pourState = 'pouring';
+    pourOpenedAt = Date.now();
+    const overlay = document.getElementById('pour-overlay');
+    overlay.classList.remove('done');
+    document.getElementById('pour-label').textContent = 'Pouring';
+    document.getElementById('pour-drink-name').textContent = name || '';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function setPourCurrent(active) {
+    const el = document.getElementById('pour-current');
+    const list = active || [];
+    if (list.length) el.innerHTML = `Now pouring <b>${escapeHtml(list.join(', '))}</b>`;
+    else el.textContent = 'Starting…';
+  }
+
+  function finishPour() {
+    pourState = 'done';
+    const overlay = document.getElementById('pour-overlay');
+    overlay.classList.add('done');
+    document.getElementById('pour-label').textContent = 'Done';
+    document.getElementById('pour-current').textContent = 'Enjoy! 🍸';
+    setTimeout(() => {
+      overlay.classList.remove('open', 'done');
+      document.body.style.overflow = '';
+      pourState = 'idle';
+    }, 2600);
+  }
+
+  async function stopPour() {
+    await fetch('/api/stop', { method: 'POST' });
+    document.getElementById('pour-overlay').classList.remove('open', 'done');
+    document.body.style.overflow = '';
+    pourState = 'idle';
+  }
+
+  function updatePour(data) {
+    if (data.pour) {
+      if (pourState !== 'pouring') openPour(data.pour.drink);
+      document.getElementById('pour-drink-name').textContent = data.pour.drink || '';
+      setPourCurrent(data.pour.active);
+    } else if (pourState === 'pouring' && !data.busy && Date.now() - pourOpenedAt > 2500) {
+      finishPour();
+    }
   }
 
   document.addEventListener('keydown', (e) => {

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine — Hardware Test</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/styles.css?v=3">
 </head>
 <body>
 
@@ -43,6 +43,10 @@
         <div class="pump-number">Pump ${i}</div>
         <div class="pump-label readonly empty" id="label-${i}">Unassigned</div>
         <button class="run-btn" onclick="runPump(${i})">Run</button>
+        <div class="cal-row">
+          <span class="cal-rate" id="rate-${i}">— ml/s</span>
+          <button class="cal-btn" onclick="calibrate(${i})">Calibrate</button>
+        </div>
       `;
       grid.appendChild(card);
     }
@@ -81,6 +85,40 @@
     [...running].forEach(id => setRunning(id, false));
   }
 
+  function renderRate(id, rate) {
+    const el = document.getElementById(`rate-${id}`);
+    if (el) el.innerHTML = `<b>${Number(rate).toFixed(2)}</b> ml/s`;
+  }
+
+  async function calibrate(id) {
+    const seconds = parseFloat(document.getElementById('duration').value);
+    if (!confirm(`Calibrate pump ${id}: it will run for ${seconds}s — have a measuring cup ready. Start?`)) return;
+
+    await fetch(`/api/pump/${id}/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ seconds }),
+    });
+    setRunning(id, true);
+
+    setTimeout(async () => {
+      setRunning(id, false);
+      const entry = prompt(`Pump ${id} ran ${seconds}s. How many ml came out?`);
+      if (entry === null || entry.trim() === '') return;
+      const measured = parseFloat(entry);
+      if (!(measured > 0)) { alert('Please enter a positive number of ml.'); return; }
+      const res = await fetch(`/api/pump/${id}/calibrate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ seconds, measured_ml: measured }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        renderRate(id, data.ml_per_s);
+      }
+    }, seconds * 1000);
+  }
+
   async function pollStatus() {
     try {
       const data = await fetch('/api/status').then(r => r.json());
@@ -89,6 +127,7 @@
         setRunning(pumpId, info.running);
         ingredients[pumpId] = info.ingredient || '';
         renderLabel(pumpId);
+        if (info.ml_per_s != null) renderRate(pumpId, info.ml_per_s);
       }
     } catch {}
   }

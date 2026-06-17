@@ -1,4 +1,6 @@
 import asyncio
+import heapq
+
 from gpiozero import OutputDevice
 
 PUMP_PINS = {
@@ -16,6 +18,26 @@ PUMP_PINS = {
 # (This board's input runs off the 12V rail, so it must be in High-trigger mode to
 #  work from the Pi's 3.3V GPIO; in Low-trigger mode 3.3V can't reach the off level.)
 RELAY_ACTIVE_HIGH = True
+
+# How many pumps may run at once during a pour. Sized for a 12V 5A supply
+# (~3 pumps + relay coils stays well under 5A). Bump cautiously after a
+# voltage-sag test. Starts are staggered to avoid simultaneous motor inrush.
+MAX_CONCURRENT_POURS = 3
+POUR_START_STAGGER_S = 0.25
+
+
+def estimate_pour_seconds(step_seconds: list[float], concurrency: int = MAX_CONCURRENT_POURS) -> float:
+    """Estimate total pour time given the concurrency cap, using LPT scheduling.
+
+    Equals the makespan: max(longest single pour, total work / lanes), roughly.
+    """
+    if not step_seconds:
+        return 0.0
+    lanes = [0.0] * max(1, concurrency)
+    for d in sorted(step_seconds, reverse=True):
+        free = heapq.heappop(lanes)          # the lane that frees up soonest
+        heapq.heappush(lanes, free + d)      # assign this pour to it
+    return round(max(lanes), 1)
 
 
 class PumpController:
@@ -63,13 +85,37 @@ class PumpController:
         self._pour_task = asyncio.create_task(self._pour_sequence(drink_name, steps))
 
     async def _pour_sequence(self, drink_name: str, steps: list[dict]) -> None:
-        """Run a drink's pumps one after another. Each step: {pump, seconds, ml, ingredient}."""
-        self._pour = {"drink": drink_name, "current": None}
+        """Pour a drink, running up to MAX_CONCURRENT_POURS pumps at once.
+
+        Each step: {pump, seconds, ml, ingredient}. Pump starts are staggered so
+        their motor inrush currents don't all land at the same instant.
+        """
+        # Longest pours first (LPT scheduling) packs the short ones into the gaps
+        # and minimizes total pour time under the concurrency cap.
+        steps = sorted(steps, key=lambda s: s["seconds"], reverse=True)
+        self._pour = {"drink": drink_name, "active": []}
+        sem = asyncio.Semaphore(MAX_CONCURRENT_POURS)
+        workers: list[asyncio.Task] = []
+
+        async def worker(step: dict) -> None:
+            async with sem:
+                if self._pour is not None:
+                    self._pour["active"].append(step["ingredient"])
+                try:
+                    await self.run(step["pump"], step["seconds"])
+                finally:
+                    if self._pour is not None and step["ingredient"] in self._pour["active"]:
+                        self._pour["active"].remove(step["ingredient"])
+
         try:
             for step in steps:
-                self._pour["current"] = step["ingredient"]
-                await self.run(step["pump"], step["seconds"])
+                workers.append(asyncio.create_task(worker(step)))
+                await asyncio.sleep(POUR_START_STAGGER_S)
+            await asyncio.gather(*workers)
         finally:
+            for w in workers:
+                if not w.done():
+                    w.cancel()
             self._pour = None
 
     def stop_all(self) -> None:

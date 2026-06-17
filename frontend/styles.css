@@ -121,6 +121,36 @@ h1 {
 .run-btn:hover { border-color: #f0c060; color: #f0c060; }
 .run-btn:active { background: rgba(240, 192, 96, 0.08); }
 
+.cal-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.cal-rate {
+  font-size: 0.62rem;
+  color: #555;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.cal-rate b { color: #f0c060; font-weight: 600; }
+
+.cal-btn {
+  border: none;
+  background: transparent;
+  color: #555;
+  font-size: 0.55rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 3px 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+.cal-btn:hover { color: #f0c060; }
+
 .pump-card.running .run-btn {
   border-color: #f0c060;
   color: #f0c060;
@@ -497,6 +527,126 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 0.92rem;
   line-height: 1.6;
   color: #9a9a9a;
+}
+
+.pour-btn {
+  display: flex;
+  width: 100%;
+  margin-top: 26px;
+  padding: 18px 16px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f6d27e 0%, #e6b048 100%);
+  color: #2a1d00;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow:
+    0 6px 20px rgba(240, 192, 96, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition: box-shadow 0.2s, transform 0.12s, filter 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pour-btn svg {
+  width: 17px;
+  height: 17px;
+  margin-top: -1px;
+}
+.pour-btn:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 30px rgba(240, 192, 96, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+.pour-btn:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow:
+    0 4px 14px rgba(240, 192, 96, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.pour-btn:disabled {
+  background: transparent;
+  border: 1px solid #242424;
+  color: #4a4a4a;
+  font-weight: 600;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Pouring overlay */
+.pour-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 7, 7, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  z-index: 200;
+}
+.pour-overlay.open { display: flex; animation: fade 0.2s ease; }
+
+.pour-ring {
+  width: 64px;
+  height: 64px;
+  border: 3px solid #2a2a2a;
+  border-top-color: #f0c060;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 26px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.pour-label {
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #f0c060;
+}
+.pour-drink-name {
+  font-size: 1.7rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: #f5f5f5;
+  margin: 8px 0 18px;
+}
+.pour-current {
+  font-size: 0.95rem;
+  color: #888;
+  min-height: 1.3em;
+}
+.pour-current b { color: #f0f0f0; font-weight: 600; }
+
+.pour-stop {
+  margin-top: 30px;
+  padding: 12px 28px;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  background: transparent;
+  color: #777;
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.pour-stop:hover { border-color: #c04040; color: #c04040; }
+
+.pour-overlay.done .pour-ring {
+  animation: none;
+  border-color: #7bc47f;
+  border-top-color: #7bc47f;
 }
 
 /* Page navigation */

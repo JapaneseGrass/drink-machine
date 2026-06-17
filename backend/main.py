@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 import recipes
 import storage
-from pumps import PumpController
+from pumps import PumpController, estimate_pour_seconds
 
 FRONTEND = os.path.join(os.path.dirname(__file__), "..", "frontend")
 controller: PumpController
@@ -124,8 +124,13 @@ async def pour(drink_id: str):
         )
 
     controller.begin_pour(drink["name"], steps)
-    total = round(sum(s["seconds"] for s in steps), 1)
-    return {"status": "pouring", "drink": drink["name"], "steps": steps, "total_seconds": total}
+    return {
+        "status": "pouring",
+        "drink": drink["name"],
+        "steps": steps,
+        "estimated_seconds": estimate_pour_seconds([s["seconds"] for s in steps]),
+        "sequential_seconds": round(sum(s["seconds"] for s in steps), 1),
+    }
 
 
 @app.get("/api/drinks")
