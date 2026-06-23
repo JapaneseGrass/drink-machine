@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine</title>
-  <link rel="stylesheet" href="/static/styles.css?v=3">
+  <link rel="stylesheet" href="/static/styles.css?v=4">
 </head>
 <body>
 
@@ -44,6 +44,8 @@
   <div class="pour-label" id="pour-label">Pouring</div>
   <div class="pour-drink-name" id="pour-drink-name"></div>
   <div class="pour-current" id="pour-current"></div>
+  <div class="pour-progress"><div class="pour-progress-fill" id="pour-fill"></div></div>
+  <div class="pour-time" id="pour-time"></div>
   <button class="pour-stop" onclick="stopPour()">Stop</button>
 </div>
 
@@ -454,11 +456,28 @@
     }
     const data = await res.json();
     closeDrink();
-    openPour(data.drink);
+    openPour(data.drink, data.estimated_seconds, 0);
     setPourCurrent([]);
   }
 
-  function openPour(name) {
+  function startBar(total, elapsed) {
+    const fill = document.getElementById('pour-fill');
+    if (!total || total <= 0) { fill.style.width = '0%'; return; }
+    const frac = Math.min(1, Math.max(0, elapsed / total));
+    const remaining = Math.max(0, total - elapsed);
+    fill.style.transition = 'none';
+    fill.style.width = (frac * 100) + '%';
+    void fill.offsetWidth;  // force reflow so the next change animates
+    fill.style.transition = `width ${remaining}s linear`;
+    fill.style.width = '100%';
+  }
+
+  function setPourTime(remaining) {
+    const el = document.getElementById('pour-time');
+    el.textContent = remaining > 0.5 ? `~${Math.ceil(remaining)}s left` : '';
+  }
+
+  function openPour(name, total, elapsed) {
     pourState = 'pouring';
     pourOpenedAt = Date.now();
     const overlay = document.getElementById('pour-overlay');
@@ -467,6 +486,8 @@
     document.getElementById('pour-drink-name').textContent = name || '';
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
+    startBar(total || 0, elapsed || 0);
+    setPourTime((total || 0) - (elapsed || 0));
   }
 
   function setPourCurrent(active) {
@@ -482,6 +503,10 @@
     overlay.classList.add('done');
     document.getElementById('pour-label').textContent = 'Done';
     document.getElementById('pour-current').textContent = 'Enjoy! 🍸';
+    const fill = document.getElementById('pour-fill');
+    fill.style.transition = 'width 0.3s ease';
+    fill.style.width = '100%';
+    document.getElementById('pour-time').textContent = '';
     setTimeout(() => {
       overlay.classList.remove('open', 'done');
       document.body.style.overflow = '';
@@ -491,6 +516,9 @@
 
   async function stopPour() {
     await fetch('/api/stop', { method: 'POST' });
+    const fill = document.getElementById('pour-fill');
+    fill.style.transition = 'none';
+    fill.style.width = '0%';
     document.getElementById('pour-overlay').classList.remove('open', 'done');
     document.body.style.overflow = '';
     pourState = 'idle';
@@ -498,9 +526,11 @@
 
   function updatePour(data) {
     if (data.pour) {
-      if (pourState !== 'pouring') openPour(data.pour.drink);
-      document.getElementById('pour-drink-name').textContent = data.pour.drink || '';
-      setPourCurrent(data.pour.active);
+      const p = data.pour;
+      if (pourState !== 'pouring') openPour(p.drink, p.total, p.elapsed);
+      document.getElementById('pour-drink-name').textContent = p.drink || '';
+      setPourCurrent(p.active);
+      if (p.total) setPourTime(p.total - p.elapsed);
     } else if (pourState === 'pouring' && !data.busy && Date.now() - pourOpenedAt > 2500) {
       finishPour();
     }

@@ -649,6 +649,33 @@ input[type="range"]::-webkit-slider-thumb {
   border-top-color: #7bc47f;
 }
 
+.pour-progress {
+  width: 260px;
+  max-width: 74%;
+  height: 6px;
+  margin-top: 26px;
+  background: #222;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.pour-progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #e6b048, #f6d27e);
+}
+.pour-overlay.done .pour-progress-fill { background: #7bc47f; }
+
+.pour-time {
+  margin-top: 12px;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  color: #777;
+  font-variant-numeric: tabular-nums;
+  min-height: 1em;
+}
+.pour-overlay.done .pour-time { color: #7bc47f; }
+
 /* Page navigation */
 .nav {
   max-width: 480px;

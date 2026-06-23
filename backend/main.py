@@ -157,7 +157,7 @@ def status():
     flow_rates = storage.get_flow_rates()
     return {
         "busy": controller.is_busy(),
-        "pour": controller.pour_status,
+        "pour": controller.pour_info(),
         "pumps": {
             i: {
                 "running": controller.is_running(i),

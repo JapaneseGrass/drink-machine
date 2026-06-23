@@ -1,5 +1,6 @@
 import asyncio
 import heapq
+import time
 
 from gpiozero import OutputDevice
 
@@ -49,6 +50,7 @@ class PumpController:
         self._running: set[int] = set()
         self._pour = None  # dict describing the in-progress pour, or None
         self._pour_task = None
+        self._pour_t0 = 0.0
 
     def is_running(self, pump_id: int) -> bool:
         return pump_id in self._running
@@ -56,9 +58,11 @@ class PumpController:
     def is_busy(self) -> bool:
         return self._pour is not None or bool(self._running)
 
-    @property
-    def pour_status(self):
-        return self._pour
+    def pour_info(self):
+        if self._pour is None:
+            return None
+        elapsed = round(max(0.0, time.monotonic() - self._pour_t0), 2)
+        return {**self._pour, "elapsed": elapsed}
 
     def on(self, pump_id: int) -> None:
         self._devices[pump_id].on()
@@ -93,7 +97,9 @@ class PumpController:
         # Longest pours first (LPT scheduling) packs the short ones into the gaps
         # and minimizes total pour time under the concurrency cap.
         steps = sorted(steps, key=lambda s: s["seconds"], reverse=True)
-        self._pour = {"drink": drink_name, "active": []}
+        total = estimate_pour_seconds([s["seconds"] for s in steps])
+        self._pour = {"drink": drink_name, "active": [], "total": total}
+        self._pour_t0 = time.monotonic()
         sem = asyncio.Semaphore(MAX_CONCURRENT_POURS)
         workers: list[asyncio.Task] = []
 
