@@ -1,0 +1,4 @@
+# Allow the Drink Machine app (running as japanesegrass) to manage WiFi via nmcli
+# without a password, so the in-app Network page can switch networks.
+# Install to /etc/sudoers.d/drinkmachine with mode 0440. Validate with: visudo -c
+japanesegrass ALL=(root) NOPASSWD: /usr/bin/nmcli

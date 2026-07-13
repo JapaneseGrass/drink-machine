@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine — Hardware Test</title>
-  <link rel="stylesheet" href="/static/styles.css?v=4">
+  <link rel="stylesheet" href="/static/styles.css?v=5">
 </head>
 <body>
 
@@ -22,11 +22,17 @@
            oninput="durDisplay.textContent = this.value + 's'">
     <span class="duration-value" id="durDisplay">3s</span>
   </div>
+  <div style="display:flex; gap:10px;">
+    <button class="run-btn" onclick="prime()">Prime All</button>
+    <button class="run-btn" onclick="rinse()">Rinse All</button>
+  </div>
   <button class="stop-btn" onclick="stopAll()">Stop All</button>
 </div>
 
 <div class="nav">
-  <a class="nav-link" href="/">&rsaquo; Back to Drinks</a>
+  <a class="nav-link" href="/">&rsaquo; Drinks</a>
+  <a class="nav-link" href="/setup">Set Up Pumps &rsaquo;</a>
+  <a class="nav-link" href="/network">Network &rsaquo;</a>
 </div>
 
 <script>
@@ -83,6 +89,24 @@
   async function stopAll() {
     await fetch('/api/stop', { method: 'POST' });
     [...running].forEach(id => setRunning(id, false));
+  }
+
+  async function prime() {
+    const seconds = parseFloat(document.getElementById('duration').value);
+    await fetch('/api/prime', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ seconds }),
+    });
+  }
+
+  async function rinse() {
+    const seconds = parseFloat(document.getElementById('duration').value);
+    await fetch('/api/rinse', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ seconds }),
+    });
   }
 
   function renderRate(id, rate) {

@@ -685,6 +685,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 .nav-link {
   display: inline-block;
+  margin: 5px 5px 0;
   padding: 11px 20px;
   border: 1px solid #1e1e1e;
   border-radius: 12px;
@@ -699,3 +700,86 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .nav-link:hover { border-color: #f0c060; color: #f0c060; }
+
+/* Network / WiFi setup page */
+.net-panel { max-width: 480px; margin: 0 auto; }
+
+.net-status {
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  color: #999;
+}
+.net-status b { color: #f0f0f0; }
+.net-status .dot { color: #7bc47f; }
+.net-status .dot.off { color: #666; }
+
+.net-label {
+  display: block;
+  font-size: 0.58rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #555;
+  margin: 14px 0 6px;
+}
+
+.net-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f6d27e 0%, #e6b048 100%);
+  color: #2a1d00;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.net-btn:active { filter: brightness(1.05); }
+.net-btn:disabled { background: transparent; border: 1px solid #242424; color: #555; cursor: default; }
+
+.net-scan-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px;
+  background: transparent;
+  border: 1px solid #1e1e1e;
+  border-radius: 12px;
+  color: #666;
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.net-scan-btn:hover { border-color: #f0c060; color: #f0c060; }
+
+.net-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.net-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 11px 14px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #ddd;
+  -webkit-tap-highlight-color: transparent;
+}
+.net-row:hover { border-color: #f0c060; }
+.net-row .meta { font-size: 0.72rem; color: #666; }
+
+.net-msg { font-size: 0.85rem; margin-top: 16px; line-height: 1.55; text-align: center; }
+.net-msg.ok { color: #7bc47f; }
+.net-msg.err { color: #c08050; }
+.net-msg.info { color: #999; }
+
+.net-hint { font-size: 0.72rem; color: #4a4a4a; margin-top: 18px; line-height: 1.55; text-align: center; }

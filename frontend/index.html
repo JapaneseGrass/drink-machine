@@ -4,16 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine</title>
-  <link rel="stylesheet" href="/static/styles.css?v=4">
+  <link rel="stylesheet" href="/static/styles.css?v=5">
 </head>
 <body>
 
 <header>
   <h1>Drink Machine</h1>
-  <div class="subtitle">Tap a pump to assign an ingredient</div>
+  <div class="subtitle">Pick a drink &middot; tap to pour</div>
 </header>
-
-<div class="pump-grid" id="pump-grid"></div>
 
 <div class="menu">
   <div class="menu-title">Drink Menu</div>
@@ -28,6 +26,8 @@
 </div>
 
 <div class="nav">
+  <a class="nav-link" href="/setup">Set Up Pumps &rsaquo;</a>
+  <a class="nav-link" href="/network">Network &rsaquo;</a>
   <a class="nav-link" href="/test">Hardware Test &rsaquo;</a>
 </div>
 
@@ -50,10 +50,7 @@
 </div>
 
 <script>
-  const running = new Set();
-  const editing = new Set();
-  const ingredients = {};
-  let vocab = [];
+  const ingredients = {};        // pump id -> assigned ingredient (from /api/status)
   let menuMode = 'all';
   let lastAssignSig = '';
   let allDrinks = [];
@@ -64,152 +61,11 @@
     ));
   }
 
-  function buildGrid() {
-    const grid = document.getElementById('pump-grid');
-    for (let i = 1; i <= 8; i++) {
-      const card = document.createElement('div');
-      card.className = 'pump-card';
-      card.id = `pump-${i}`;
-      card.innerHTML = `
-        <div class="pump-number">Pump ${i}</div>
-        <div class="pump-label empty" id="label-${i}" onclick="editLabel(${i})">Tap to assign</div>
-      `;
-      grid.appendChild(card);
-    }
-  }
-
-  function renderLabel(id) {
-    if (editing.has(id)) return;
-    const label = document.getElementById(`label-${id}`);
-    if (!label) return;
-    const name = ingredients[id] || '';
-    label.textContent = name || 'Tap to assign';
-    label.classList.toggle('empty', !name);
-  }
-
-  function editLabel(id) {
-    if (editing.has(id)) return;
-    editing.add(id);
-    const card = document.getElementById(`pump-${id}`);
-    const label = document.getElementById(`label-${id}`);
-    const current = ingredients[id] || '';
-
-    const input = document.createElement('input');
-    input.className = 'pump-label-input';
-    input.type = 'text';
-    input.value = current;
-    input.placeholder = 'Search ingredient...';
-    input.maxLength = 24;
-    input.autocomplete = 'off';
-
-    const dropdown = document.createElement('div');
-    dropdown.className = 'combo-dropdown';
-
-    let committed = false;
-    const restoreLabel = () => {
-      const fresh = document.createElement('div');
-      fresh.className = 'pump-label';
-      fresh.id = `label-${id}`;
-      fresh.setAttribute('onclick', `editLabel(${id})`);
-      input.replaceWith(fresh);
-      dropdown.remove();
-      renderLabel(id);
-    };
-    const commit = async (value) => {
-      if (committed || !editing.has(id)) return;
-      committed = true;
-      editing.delete(id);
-      const v = value.trim();
-      ingredients[id] = v;
-      restoreLabel();
-      renderDrinks();
-      await assignPump(id, v);
-    };
-    const cancel = () => {
-      if (committed || !editing.has(id)) return;
-      committed = true;
-      editing.delete(id);
-      restoreLabel();
-    };
-
-    let activeIndex = -1;
-    let options = [];
-
-    const renderOptions = () => {
-      const q = input.value.trim().toLowerCase();
-      let matches = vocab.filter(name => name.toLowerCase().includes(q));
-      const exact = vocab.some(name => name.toLowerCase() === q);
-      options = matches.slice();
-      let html = matches
-        .map((name, i) => `<div class="combo-option" data-i="${i}">${escapeHtml(name)}</div>`)
-        .join('');
-      // Allow committing a custom value not in the vocabulary
-      if (q && !exact) {
-        options.push(input.value.trim());
-        html += `<div class="combo-option custom" data-i="${matches.length}">Use "${escapeHtml(input.value.trim())}"</div>`;
-      }
-      dropdown.innerHTML = html || '<div class="combo-option custom">No matches</div>';
-      activeIndex = -1;
-      dropdown.querySelectorAll('.combo-option[data-i]').forEach(el => {
-        el.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          commit(options[parseInt(el.dataset.i)]);
-        });
-      });
-    };
-
-    const setActive = (idx) => {
-      const els = dropdown.querySelectorAll('.combo-option[data-i]');
-      if (!els.length) return;
-      activeIndex = (idx + els.length) % els.length;
-      els.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
-    };
-
-    input.addEventListener('input', renderOptions);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown') { e.preventDefault(); setActive(activeIndex + 1); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(activeIndex - 1); }
-      else if (e.key === 'Enter') {
-        e.preventDefault();
-        commit(activeIndex >= 0 ? options[activeIndex] : input.value);
-      } else if (e.key === 'Escape') { cancel(); }
-    });
-    input.addEventListener('blur', () => setTimeout(() => commit(input.value), 120));
-
-    label.replaceWith(input);
-    card.appendChild(dropdown);
-    renderOptions();
-    input.focus();
-    input.select();
-  }
-
-  async function assignPump(id, ingredient) {
-    try {
-      await fetch(`/api/pump/${id}/assign`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ingredient }),
-      });
-    } catch {}
-  }
-
-  function setRunning(id, state) {
-    const card = document.getElementById(`pump-${id}`);
-    if (!card) return;
-    state ? running.add(id) : running.delete(id);
-    card.classList.toggle('running', state);
-  }
-
   async function pollStatus() {
     try {
       const data = await fetch('/api/status').then(r => r.json());
       for (const [id, info] of Object.entries(data.pumps)) {
-        const pumpId = parseInt(id);
-        setRunning(pumpId, info.running);
-        if (!editing.has(pumpId)) {
-          ingredients[pumpId] = info.ingredient || '';
-          renderLabel(pumpId);
-        }
+        ingredients[parseInt(id)] = info.ingredient || '';
       }
       const sig = Object.keys(ingredients).sort()
         .map(k => `${k}:${ingredients[k]}`).join('|');
@@ -226,13 +82,6 @@
       const data = await fetch('/api/drinks').then(r => r.json());
       allDrinks = data.drinks;
       renderDrinks();
-    } catch {}
-  }
-
-  async function loadVocab() {
-    try {
-      const data = await fetch('/api/ingredients').then(r => r.json());
-      vocab = data.ingredients || [];
     } catch {}
   }
 
@@ -275,7 +124,7 @@
 
     if (drinks.length === 0) {
       const msg = menuMode === 'make'
-        ? 'No drinks available yet — assign ingredients to your pumps.'
+        ? 'No drinks available yet — set up your pumps.'
         : 'No drinks match your search.';
       list.innerHTML = `<div class="menu-empty">${msg}</div>`;
       return;
@@ -379,6 +228,7 @@
   function openDrink(id) {
     const d = allDrinks.find(x => x.id === id);
     if (!d) return;
+    pourScale = 1;
     const avail = availableSet();
     const missing = d.ingredients
       .filter(i => !avail.has(i.name.trim().toLowerCase()))
@@ -410,10 +260,17 @@
       'stroke-linecap="round" stroke-linejoin="round">' +
       '<path d="M5 4h14l-7 8z"/><line x1="12" y1="12" x2="12" y2="20"/>' +
       '<line x1="8" y1="20" x2="16" y2="20"/></svg>';
-    let pourBtn;
+    let pourBtn, sizeSelector = '';
     if (!avail.size) {
-      pourBtn = '<button class="pour-btn" disabled>Assign pumps to pour</button>';
+      pourBtn = '<button class="pour-btn" disabled>Set up pumps to pour</button>';
     } else if (makeable) {
+      sizeSelector = `
+        <div class="modal-section-title">Size</div>
+        <div class="menu-toggle">
+          <button class="toggle-btn" onclick="setSize(0.75, this)">Small</button>
+          <button class="toggle-btn active" onclick="setSize(1, this)">Regular</button>
+          <button class="toggle-btn" onclick="setSize(1.25, this)">Large</button>
+        </div>`;
       pourBtn = `<button class="pour-btn" onclick="pourDrink('${d.id}')">${glassIcon}<span>Pour</span></button>`;
     } else {
       pourBtn = '<button class="pour-btn" disabled>Missing ingredients</button>';
@@ -428,6 +285,7 @@
       ${garnish}
       <div class="modal-section-title">History</div>
       <div class="modal-history">${escapeHtml(d.history || '')}</div>
+      ${sizeSelector}
       ${pourBtn}`;
 
     document.getElementById('modal').classList.add('open');
@@ -446,9 +304,20 @@
   // ----- Pour flow -----
   let pourState = 'idle';   // 'idle' | 'pouring' | 'done'
   let pourOpenedAt = 0;
+  let pourScale = 1;        // size multiplier chosen in the modal
+
+  function setSize(scale, el) {
+    pourScale = scale;
+    el.parentElement.querySelectorAll('.toggle-btn')
+      .forEach(b => b.classList.toggle('active', b === el));
+  }
 
   async function pourDrink(id) {
-    const res = await fetch(`/api/pour/${id}`, { method: 'POST' });
+    const res = await fetch(`/api/pour/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scale: pourScale }),
+    });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       alert(err.detail || 'Could not start pour.');
@@ -540,8 +409,6 @@
     if (e.key === 'Escape') closeDrink();
   });
 
-  buildGrid();
-  loadVocab();
   loadDrinks();
   pollStatus();
   setInterval(pollStatus, 2000);

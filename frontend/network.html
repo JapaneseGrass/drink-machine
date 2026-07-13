@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Drink Machine — Network</title>
+  <link rel="stylesheet" href="/static/styles.css?v=6">
+</head>
+<body>
+
+<header>
+  <h1>Network</h1>
+  <div class="subtitle">Connect the machine to WiFi</div>
+</header>
+
+<div class="net-panel">
+  <div class="net-status" id="net-status">Checking connection…</div>
+
+  <label class="net-label" for="ssid">Network name</label>
+  <input type="text" class="search-box" id="ssid" placeholder="e.g. TheirHouseWiFi" autocomplete="off">
+
+  <label class="net-label" for="pass">Password</label>
+  <input type="password" class="search-box" id="pass" placeholder="WiFi password" autocomplete="off">
+
+  <button class="net-btn" id="connect-btn" onclick="connect()">Connect</button>
+  <button class="net-scan-btn" onclick="scan()">Scan for nearby networks</button>
+
+  <div class="net-list" id="net-list"></div>
+  <div class="net-msg" id="net-msg"></div>
+
+  <div class="net-hint">
+    Tip: joining a network switches the Pi off its current one, so this page will
+    disconnect. If it works, reconnect your phone to that network and reopen
+    <b>AngelsRaspberryPi4.local:8000</b>.
+  </div>
+</div>
+
+<div class="nav">
+  <a class="nav-link" href="/">&rsaquo; Drinks</a>
+  <a class="nav-link" href="/setup">Set Up Pumps &rsaquo;</a>
+</div>
+
+<script>
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
+  const ssidInput = document.getElementById('ssid');
+  const passInput = document.getElementById('pass');
+
+  function msg(text, kind) {
+    const el = document.getElementById('net-msg');
+    el.className = 'net-msg ' + (kind || 'info');
+    el.textContent = text;
+  }
+
+  async function loadStatus() {
+    try {
+      const s = await fetch('/api/wifi/status').then(r => r.json());
+      const el = document.getElementById('net-status');
+      if (s.connected && s.ssid) {
+        el.innerHTML = `<span class="dot">&#9679;</span> Connected to <b>${escapeHtml(s.ssid)}</b>` +
+          (s.ip ? ` &middot; ${escapeHtml(s.ip)}` : '');
+      } else {
+        el.innerHTML = `<span class="dot off">&#9679;</span> Not connected to any network`;
+      }
+    } catch {
+      document.getElementById('net-status').textContent = 'Could not read status.';
+    }
+  }
+
+  async function scan() {
+    msg('Scanning…', 'info');
+    document.getElementById('net-list').innerHTML = '';
+    try {
+      const data = await fetch('/api/wifi/scan').then(r => r.json());
+      const nets = data.networks || [];
+      if (!nets.length) {
+        msg('No networks found. Type the name in manually above.', 'info');
+        return;
+      }
+      msg('', 'info');
+      document.getElementById('net-list').innerHTML = nets.map(n => `
+        <div class="net-row" onclick="pick('${escapeHtml(n.ssid).replace(/'/g, "\\'")}')">
+          <span>${escapeHtml(n.ssid)} ${n.secured ? '&#128274;' : ''}</span>
+          <span class="meta">${n.signal}%</span>
+        </div>`).join('');
+    } catch {
+      msg('Scan failed. Type the network name in manually.', 'err');
+    }
+  }
+
+  function pick(ssid) {
+    ssidInput.value = ssid;
+    passInput.focus();
+    msg('', 'info');
+  }
+
+  async function connect() {
+    const ssid = ssidInput.value.trim();
+    if (!ssid) { msg('Enter a network name first.', 'err'); return; }
+    const password = passInput.value;
+    const btn = document.getElementById('connect-btn');
+    btn.disabled = true;
+    msg(`Connecting to "${ssid}"…`, 'info');
+    try {
+      const res = await fetch('/api/wifi/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ssid, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        msg(`Connected to "${ssid}"! Reconnect your phone to "${ssid}", then open ` +
+            `http://AngelsRaspberryPi4.local:8000`, 'ok');
+      } else {
+        msg(data.message || data.detail || 'Could not connect — check the password and try again.', 'err');
+        btn.disabled = false;
+      }
+    } catch {
+      // The request likely dropped because the Pi switched networks — usually means success.
+      msg(`Switching networks… If it worked, reconnect your phone to "${ssid}" and open ` +
+          `http://AngelsRaspberryPi4.local:8000`, 'ok');
+    }
+  }
+
+  loadStatus();
+</script>
+</body>
+</html>

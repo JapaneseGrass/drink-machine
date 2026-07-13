@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Drink Machine — Pump Setup</title>
+  <link rel="stylesheet" href="/static/styles.css?v=5">
+</head>
+<body>
+
+<header>
+  <h1>Pump Setup</h1>
+  <div class="subtitle">Tap a pump to assign an ingredient</div>
+</header>
+
+<div class="pump-grid" id="pump-grid"></div>
+
+<div class="nav">
+  <a class="nav-link" href="/">&rsaquo; Drinks</a>
+  <a class="nav-link" href="/network">Network &rsaquo;</a>
+  <a class="nav-link" href="/test">Hardware Test &rsaquo;</a>
+</div>
+
+<script>
+  const editing = new Set();
+  const running = new Set();
+  const ingredients = {};
+  let vocab = [];
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
+  function buildGrid() {
+    const grid = document.getElementById('pump-grid');
+    for (let i = 1; i <= 8; i++) {
+      const card = document.createElement('div');
+      card.className = 'pump-card';
+      card.id = `pump-${i}`;
+      card.innerHTML = `
+        <div class="pump-number">Pump ${i}</div>
+        <div class="pump-label empty" id="label-${i}" onclick="editLabel(${i})">Tap to assign</div>
+      `;
+      grid.appendChild(card);
+    }
+  }
+
+  function renderLabel(id) {
+    if (editing.has(id)) return;
+    const label = document.getElementById(`label-${id}`);
+    if (!label) return;
+    const name = ingredients[id] || '';
+    label.textContent = name || 'Tap to assign';
+    label.classList.toggle('empty', !name);
+  }
+
+  function editLabel(id) {
+    if (editing.has(id)) return;
+    editing.add(id);
+    const card = document.getElementById(`pump-${id}`);
+    const label = document.getElementById(`label-${id}`);
+    const current = ingredients[id] || '';
+
+    const input = document.createElement('input');
+    input.className = 'pump-label-input';
+    input.type = 'text';
+    input.value = current;
+    input.placeholder = 'Search ingredient...';
+    input.maxLength = 24;
+    input.autocomplete = 'off';
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'combo-dropdown';
+
+    let committed = false;
+    const restoreLabel = () => {
+      const fresh = document.createElement('div');
+      fresh.className = 'pump-label';
+      fresh.id = `label-${id}`;
+      fresh.setAttribute('onclick', `editLabel(${id})`);
+      input.replaceWith(fresh);
+      dropdown.remove();
+      renderLabel(id);
+    };
+    const commit = async (value) => {
+      if (committed || !editing.has(id)) return;
+      committed = true;
+      editing.delete(id);
+      const v = value.trim();
+      ingredients[id] = v;
+      restoreLabel();
+      await assignPump(id, v);
+    };
+    const cancel = () => {
+      if (committed || !editing.has(id)) return;
+      committed = true;
+      editing.delete(id);
+      restoreLabel();
+    };
+
+    let activeIndex = -1;
+    let options = [];
+
+    const renderOptions = () => {
+      const q = input.value.trim().toLowerCase();
+      let matches = vocab.filter(name => name.toLowerCase().includes(q));
+      const exact = vocab.some(name => name.toLowerCase() === q);
+      options = matches.slice();
+      let html = matches
+        .map((name, i) => `<div class="combo-option" data-i="${i}">${escapeHtml(name)}</div>`)
+        .join('');
+      // Allow committing a custom value not in the vocabulary
+      if (q && !exact) {
+        options.push(input.value.trim());
+        html += `<div class="combo-option custom" data-i="${matches.length}">Use "${escapeHtml(input.value.trim())}"</div>`;
+      }
+      dropdown.innerHTML = html || '<div class="combo-option custom">No matches</div>';
+      activeIndex = -1;
+      dropdown.querySelectorAll('.combo-option[data-i]').forEach(el => {
+        el.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          commit(options[parseInt(el.dataset.i)]);
+        });
+      });
+    };
+
+    const setActive = (idx) => {
+      const els = dropdown.querySelectorAll('.combo-option[data-i]');
+      if (!els.length) return;
+      activeIndex = (idx + els.length) % els.length;
+      els.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+    };
+
+    input.addEventListener('input', renderOptions);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActive(activeIndex + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(activeIndex - 1); }
+      else if (e.key === 'Enter') {
+        e.preventDefault();
+        commit(activeIndex >= 0 ? options[activeIndex] : input.value);
+      } else if (e.key === 'Escape') { cancel(); }
+    });
+    input.addEventListener('blur', () => setTimeout(() => commit(input.value), 120));
+
+    label.replaceWith(input);
+    card.appendChild(dropdown);
+    renderOptions();
+    input.focus();
+    input.select();
+  }
+
+  async function assignPump(id, ingredient) {
+    try {
+      await fetch(`/api/pump/${id}/assign`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ingredient }),
+      });
+    } catch {}
+  }
+
+  function setRunning(id, state) {
+    const card = document.getElementById(`pump-${id}`);
+    if (!card) return;
+    state ? running.add(id) : running.delete(id);
+    card.classList.toggle('running', state);
+  }
+
+  async function pollStatus() {
+    try {
+      const data = await fetch('/api/status').then(r => r.json());
+      for (const [id, info] of Object.entries(data.pumps)) {
+        const pumpId = parseInt(id);
+        setRunning(pumpId, info.running);
+        if (!editing.has(pumpId)) {
+          ingredients[pumpId] = info.ingredient || '';
+          renderLabel(pumpId);
+        }
+      }
+    } catch {}
+  }
+
+  async function loadVocab() {
+    try {
+      const data = await fetch('/api/ingredients').then(r => r.json());
+      vocab = data.ingredients || [];
+    } catch {}
+  }
+
+  buildGrid();
+  loadVocab();
+  pollStatus();
+  setInterval(pollStatus, 2000);
+</script>
+</body>
+</html>

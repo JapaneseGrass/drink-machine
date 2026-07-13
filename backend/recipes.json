@@ -401,5 +401,20 @@
     ],
     "garnish": "Cherry",
     "history": "The cola-based, non-alcoholic counterpart to the Shirley Temple, named for the singing cowboy actor Roy Rogers."
+  },
+  {
+    "id": "michelada",
+    "name": "Michelada",
+    "category": "Beer",
+    "glass": "highball",
+    "color": "#bf4326",
+    "ingredients": [
+      { "name": "Lime Juice", "ml": 30 },
+      { "name": "Clamato", "ml": 90 },
+      { "name": "Hot Sauce", "ml": 3 },
+      { "name": "Worcestershire Sauce", "ml": 6 }
+    ],
+    "garnish": "Tajin/salt rim, lime; top with a Mexican lager",
+    "history": "A Mexican beer cocktail: a cold lager built over lime, hot sauce, and savory seasonings, often with Clamato in the border and Tex-Mex style. It is a beloved hangover cure across Mexico and El Paso. The machine pours the savory mix — top it with beer by hand."
   }
 ]

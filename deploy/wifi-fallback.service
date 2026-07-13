@@ -1,0 +1,11 @@
+[Unit]
+Description=Drink Machine WiFi setup-hotspot fallback
+After=NetworkManager.service
+Wants=NetworkManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/japanesegrass/drink-machine/deploy/wifi-fallback.sh
+
+[Install]
+WantedBy=multi-user.target
