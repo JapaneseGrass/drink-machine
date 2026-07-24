@@ -28,6 +28,23 @@
     "history": "Mexico's most popular tequila cocktail — far more common there than the margarita. It is traditionally built with grapefruit soda such as Squirt or Jarritos. \"Paloma\" means \"dove\" in Spanish."
   },
   {
+    "id": "paloma-sunrise",
+    "name": "Paloma Sunrise",
+    "category": "Tequila",
+    "glass": "highball",
+    "color": "#f2833c",
+    "ingredients": [
+      { "name": "Tequila", "ml": 60 },
+      { "name": "Grapefruit Juice", "ml": 60 },
+      { "name": "Orange Juice", "ml": 30 },
+      { "name": "Lime Juice", "ml": 15 },
+      { "name": "Simple Syrup", "ml": 10 },
+      { "name": "Grenadine", "ml": 5 }
+    ],
+    "garnish": "Grapefruit or orange slice, lime wheel",
+    "history": "A sunrise-hued riff on the Paloma that trades grapefruit soda for fresh grapefruit and orange juice, with a touch of grenadine sinking to the bottom for the layered look of a Tequila Sunrise. It marries the citrus tang of a Paloma with the color and sweetness of its sunrise cousin."
+  },
+  {
     "id": "ranch-water",
     "name": "Ranch Water",
     "category": "Tequila",
