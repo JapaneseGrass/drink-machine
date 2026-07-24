@@ -178,12 +178,15 @@ def _run_all_pumps(label: str, seconds: float):
 
 
 @app.post("/api/prime")
-def prime(req: MaintenanceRequest):
+async def prime(req: MaintenanceRequest):
+    # Must be async: begin_pour() schedules the pour via asyncio.create_task,
+    # which needs the running event loop. A sync endpoint runs in a worker
+    # thread with no loop and raises "no running event loop".
     return _run_all_pumps("Priming", req.seconds)
 
 
 @app.post("/api/rinse")
-def rinse(req: MaintenanceRequest):
+async def rinse(req: MaintenanceRequest):
     return _run_all_pumps("Rinsing", req.seconds)
 
 

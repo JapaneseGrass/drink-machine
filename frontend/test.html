@@ -101,23 +101,29 @@
     [...running].forEach(id => setRunning(id, false));
   }
 
-  async function prime() {
+  async function runAll(endpoint, label) {
     const seconds = parseFloat(document.getElementById('duration').value);
-    await fetch('/api/prime', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ seconds }),
-    });
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ seconds }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.detail || `${label} failed (server error).`);
+        return;
+      }
+      // Light every pump immediately; pollStatus keeps them in sync and clears
+      // them when the run ends.
+      for (let i = 1; i <= 8; i++) setRunning(i, true);
+    } catch {
+      alert(`${label} failed — could not reach the machine.`);
+    }
   }
 
-  async function rinse() {
-    const seconds = parseFloat(document.getElementById('duration').value);
-    await fetch('/api/rinse', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ seconds }),
-    });
-  }
+  function prime() { runAll('/api/prime', 'Prime'); }
+  function rinse() { runAll('/api/rinse', 'Rinse'); }
 
   function renderRate(id, rate) {
     const el = document.getElementById(`rate-${id}`);
