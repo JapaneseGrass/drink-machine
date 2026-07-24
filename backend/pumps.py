@@ -20,10 +20,13 @@ PUMP_PINS = {
 #  work from the Pi's 3.3V GPIO; in Low-trigger mode 3.3V can't reach the off level.)
 RELAY_ACTIVE_HIGH = True
 
-# How many pumps may run at once during a pour. Sized for a 12V 5A supply
-# (~3 pumps + relay coils stays well under 5A). Bump cautiously after a
-# voltage-sag test. Starts are staggered to avoid simultaneous motor inrush.
-MAX_CONCURRENT_POURS = 3
+# How many pumps may run at once during a pour. Sized for a 12V 10A supply:
+# scaling the validated 5A->3-pump budget in proportion to the doubled current
+# keeps the same per-pump margin (~6 pumps + relay coils stays comfortably under
+# 10A). This covers every recipe but the 7-ingredient Long Island, which just
+# runs its last pump in a second lane. Bump toward 8 only after a voltage-sag
+# test. Starts are staggered to avoid simultaneous motor inrush.
+MAX_CONCURRENT_POURS = 6
 POUR_START_STAGGER_S = 0.25
 
 

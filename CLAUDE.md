@@ -40,7 +40,7 @@ peristaltic pumps via relays to dispense drinks.
 ## Hardware
 - Red 8-channel **"High/Low Level Trigger"** relay module (SRD-12VDC relays)
 - 8 peristaltic pumps (12V DC, Kamoer NKP, 3mm ID x 5mm OD tubing)
-- 12V **5A** power supply
+- 12V **10A** power supply
 - Raspberry Pi 4 GPIO pins control the relay channels
 
 ### Relay configuration (important — this cost a long debugging session)
@@ -56,8 +56,8 @@ peristaltic pumps via relays to dispense drinks.
 - Relay board power: `DC+` / `DC−` from the **12V supply** (never from the Pi)
 - Control: each `IN` → its GPIO, plus one shared Pi GND → `DC−`
 - Pumps: 12V+ → relay `COM`, relay `NO` → pump (+), pump (−) → 12V−
-- Pours are capped at **3 concurrent pumps** (`MAX_CONCURRENT_POURS`) to stay well
-  inside the 5A budget, with staggered starts to spread motor inrush.
+- Pours are capped at **6 concurrent pumps** (`MAX_CONCURRENT_POURS`) to stay well
+  inside the 10A budget, with staggered starts to spread motor inrush.
 
 ## GPIO Pin Mapping
 Common ground: any Pi GND (e.g. physical pin 9) → relay `DC−`.
@@ -114,7 +114,7 @@ copy dies with `lgpio.error: 'GPIO busy'`.
 2. Recipe database — 31 drinks with ingredients, pour amounts (ml), glass art, history
 3. "What can I make?" engine — matches loaded ingredients to recipes
 4. Drink menu UI — 2-up tiles with SVG glass art, search, detail modal
-5. Pour flow — ml → time via per-pump calibration, up to 3 pumps concurrently,
+5. Pour flow — ml → time via per-pump calibration, up to 6 pumps concurrently,
    longest-first (LPT) scheduling to minimize pour time
 6. Status feedback — busy/pour state, live progress bar + time remaining
 7. Per-pump calibration (`ml_per_s`) — calibrate each pump with its actual liquid,
