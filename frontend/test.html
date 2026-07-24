@@ -4,9 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine — Hardware Test</title>
-  <link rel="stylesheet" href="/static/styles.css?v=5">
+  <link rel="stylesheet" href="/static/styles.css?v=7">
+  <link rel="stylesheet" href="/static/birthday.css?v=3">
 </head>
 <body>
+<script>
+  /* Carry the fiesta theme across pages so tapping through from the
+     menu keeps the same look. Runs before paint to avoid a flash. */
+  try {
+    if (localStorage.getItem("dm-theme") === "fiesta")
+      document.body.classList.add("fiesta", "subpage");
+  } catch {}
+</script>
+
 
 <header>
   <h1>Hardware Test</h1>
