@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine</title>
-  <link rel="stylesheet" href="/static/styles.css?v=7">
-  <link rel="stylesheet" href="/static/birthday.css?v=3">
+  <link rel="stylesheet" href="/static/styles.css?v=8">
+  <link rel="stylesheet" href="/static/birthday.css?v=4">
 </head>
 <body>
 
@@ -40,21 +40,15 @@
 <div class="menu" id="menu">
   <div class="menu-title">Drink Menu</div>
 
-  <div class="menu-gate" id="menu-gate">
-    <div class="gate-count" id="gate-count">Checking the bar&hellip;</div>
-    <button class="gate-btn" id="gate-make">See What I Can Make</button>
-    <button class="gate-all" id="gate-all">Browse all recipes</button>
-  </div>
+  <div class="menu-intro" id="menu-intro"></div>
 
   <input type="text" class="search-box" id="search"
          placeholder="Search drinks or ingredients..."
          oninput="renderDrinks()" autocomplete="off">
-  <div class="menu-toggle">
-    <button class="toggle-btn active" id="toggle-all" onclick="setMode('all')">All Drinks</button>
-    <button class="toggle-btn" id="toggle-make" onclick="setMode('make')">Can Make</button>
-  </div>
+
   <div class="drink-list" id="drink-list"></div>
-  <button class="menu-hide" id="menu-hide" onclick="closeMenu()">&times; Close the menu</button>
+
+  <button class="browse-link" id="browse-link" onclick="toggleBrowse()"></button>
 </div>
 
 <div class="nav">
@@ -87,7 +81,7 @@
 
 <script>
   const ingredients = {};        // pump id -> assigned ingredient (from /api/status)
-  let menuMode = 'all';
+  let menuMode = 'make';   // 'make' = only pourable drinks (default) | 'all' = full book
   let lastAssignSig = '';
   let allDrinks = [];
 
@@ -254,55 +248,47 @@
     );
   }
 
-  // ----- Menu open/closed -----
-  // The list stays closed until someone asks for it. The primary way in is
-  // "what can I pour right now"; the full recipe book is a deliberate choice.
-  let menuOpen = false;
+  // ----- Menu modes -----
+  // 'make' (default): only the drinks the loaded bottles can actually pour, so
+  // the menu opens honest instead of dangling 31 recipes it mostly can't make.
+  // 'all': the full recipe book, reached through the small "Browse all" link.
 
-  function openMenu(mode) {
-    menuOpen = true;
-    document.getElementById('menu').classList.add('open');
-    setMode(mode);                       // setMode re-renders
+  function toggleBrowse() {
+    setMode(menuMode === 'all' ? 'make' : 'all');
     document.getElementById('menu').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function closeMenu() {
-    menuOpen = false;
-    document.getElementById('menu').classList.remove('open');
-    document.getElementById('search').value = '';
-    renderDrinks();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function updateGate(drinks, avail) {
-    const canMake = drinks.filter(d => d.available).length;
-    const count = document.getElementById('gate-count');
-    const primary = document.getElementById('gate-make');
-    const browse = document.getElementById('gate-all');
-
-    if (!avail.size) {
-      count.textContent = 'No bottles loaded yet';
-      primary.textContent = 'Set Up Pumps';
-      primary.onclick = () => { location.href = '/setup'; };
-    } else if (canMake === 0) {
-      count.textContent = 'Nothing pourable with the current bottles';
-      primary.textContent = 'Change Bottles';
-      primary.onclick = () => { location.href = '/setup'; };
-    } else {
-      count.textContent = `${canMake} drink${canMake === 1 ? '' : 's'} ready to pour`;
-      primary.textContent = 'See What I Can Make';
-      primary.onclick = () => openMenu('make');
-    }
-
-    browse.textContent = `Browse all ${allDrinks.length} recipes`;
-    browse.onclick = () => openMenu('all');
   }
 
   function setMode(mode) {
     menuMode = mode;
-    document.getElementById('toggle-all').classList.toggle('active', mode === 'all');
-    document.getElementById('toggle-make').classList.toggle('active', mode === 'make');
+    document.getElementById('search').value = '';
+    document.getElementById('menu').classList.toggle('browsing', mode === 'all');
     renderDrinks();
+  }
+
+  function renderIntro(avail, canMake) {
+    const intro = document.getElementById('menu-intro');
+    if (menuMode === 'all') {
+      intro.className = 'menu-intro';
+      intro.innerHTML = avail.size
+        ? `All ${allDrinks.length} recipes &middot; <b>${canMake}</b> you can pour now`
+        : `All ${allDrinks.length} recipes in the book`;
+    } else if (!avail.size) {
+      // First run — point people at ingredient setup before anything else.
+      intro.className = 'menu-intro prompt';
+      intro.innerHTML =
+        `<div class="intro-head">First, set up your ingredients</div>` +
+        `<div class="intro-sub">Tell the machine which bottle sits on each pump, and it'll show you every drink you can pour right now.</div>` +
+        `<button class="intro-btn" onclick="location.href='/setup'">Set Up Ingredients</button>`;
+    } else if (canMake === 0) {
+      intro.className = 'menu-intro prompt';
+      intro.innerHTML =
+        `<div class="intro-head">No drinks with the current bottles</div>` +
+        `<div class="intro-sub">Swap in a few ingredients and your drinks will appear here.</div>` +
+        `<button class="intro-btn" onclick="location.href='/setup'">Change Bottles</button>`;
+    } else {
+      intro.className = 'menu-intro count';
+      intro.innerHTML = `${canMake} drink${canMake === 1 ? '' : 's'} ready to pour`;
+    }
   }
 
   function renderDrinks() {
@@ -316,36 +302,39 @@
         .map(i => i.name);
       return { ...d, available: missing.length === 0, missing };
     });
+    const canMake = drinks.filter(d => d.available).length;
 
-    updateGate(drinks, avail);   // counts the whole list, so do it before filtering
+    renderIntro(avail, canMake);
+    document.getElementById('browse-link').textContent = menuMode === 'all'
+      ? '‹ Show only what I can make'
+      : `Browse all ${allDrinks.length} recipes ›`;
 
-    // Closed: show nothing but the drink of the night, so the menu never
-    // greets anyone with 31 recipes they mostly can't pour.
-    if (!menuOpen) {
+    // Default view before any bottles are loaded: no drink cards, just the
+    // setup prompt above. (In fiesta mode, tease the drink of the night.)
+    if (menuMode === 'make' && !avail.size) {
       const hero = fiesta ? drinks.find(d => d.id === PARTY.featured) : null;
       list.innerHTML = hero ? drinkCard(hero, true, avail) : '';
       return;
     }
 
-    drinks = drinks.filter(d => drinkMatches(d, q));
-    if (menuMode === 'make') drinks = drinks.filter(d => d.available);
+    let shown = drinks.filter(d => drinkMatches(d, q));
+    if (menuMode === 'make') shown = shown.filter(d => d.available);
 
     // In fiesta mode the drink of the night leads the menu — but not while
     // the guest is searching, where relevance order matters more.
     if (fiesta && !q) {
-      const i = drinks.findIndex(d => d.id === PARTY.featured);
-      if (i > 0) drinks.unshift(drinks.splice(i, 1)[0]);
+      const i = shown.findIndex(d => d.id === PARTY.featured);
+      if (i > 0) shown.unshift(shown.splice(i, 1)[0]);
     }
 
-    if (drinks.length === 0) {
-      const msg = menuMode === 'make'
-        ? 'No drinks available yet — set up your pumps.'
-        : 'No drinks match your search.';
+    if (shown.length === 0) {
+      const msg = q ? 'No drinks match your search.'
+        : (menuMode === 'make' ? 'No drinks ready to pour yet.' : 'No recipes found.');
       list.innerHTML = `<div class="menu-empty">${msg}</div>`;
       return;
     }
 
-    list.innerHTML = drinks
+    list.innerHTML = shown
       .map(d => drinkCard(d, fiesta && !q && d.id === PARTY.featured, avail))
       .join('');
   }

@@ -182,28 +182,28 @@ body.fiesta .toggle-btn.active {
 
 body.fiesta .menu-empty { color: rgba(255, 243, 226, 0.35); }
 
-/* ---------- menu gate ---------- */
+/* ---------- menu intro + browse link ---------- */
 
-body.fiesta .menu-gate {
+body.fiesta .menu-intro.count,
+body.fiesta .menu-intro:not(.prompt) { color: var(--turquoise); }
+body.fiesta .menu-intro b { color: var(--cream); }
+
+body.fiesta .menu-intro.prompt {
   background: linear-gradient(180deg,
     rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
   border-color: rgba(255, 176, 32, 0.24);
 }
-body.fiesta .gate-count { color: var(--turquoise); }
-body.fiesta .gate-btn {
+body.fiesta .intro-head { color: var(--cream); }
+body.fiesta .intro-sub { color: rgba(255, 243, 226, 0.55); }
+body.fiesta .intro-btn {
   background: linear-gradient(180deg, var(--marigold) 0%, var(--rosa) 100%);
   color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   box-shadow: 0 5px 18px rgba(255, 46, 136, 0.34),
               inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
-body.fiesta .gate-all { color: rgba(255, 243, 226, 0.5); }
-body.fiesta .gate-all:hover { color: var(--marigold); }
-body.fiesta .menu-hide {
-  border-color: rgba(255, 243, 226, 0.14);
-  color: rgba(255, 243, 226, 0.45);
-}
-body.fiesta .menu-hide:hover { border-color: var(--marigold); color: var(--marigold); }
+body.fiesta .browse-link { color: rgba(255, 243, 226, 0.45); }
+body.fiesta .browse-link:hover { color: var(--marigold); }
 
 /* ---------- drink cards ---------- */
 

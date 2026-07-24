@@ -333,41 +333,52 @@ input[type="range"]::-webkit-slider-thumb {
   padding: 24px 0;
 }
 
-/* ---- Menu gate ----
-   The drink list stays closed until someone asks for it, so nobody is met
-   with a wall of recipes the machine can't actually pour. Flex ordering lets
-   the gate sit *below* the featured card while the menu is closed. */
-.menu { display: flex; flex-direction: column; }
-.menu-title  { order: 1; }
-.search-box  { order: 2; }
-.menu-toggle { order: 2; }
-.drink-list  { order: 3; }
-.menu-gate   { order: 4; }
-.menu-hide   { order: 5; }
+/* ---- Menu intro + browse link ----
+   The menu opens showing only what can be poured now (or, before any bottles
+   are set up, a prompt to do that first). The full recipe book lives one small
+   text link away — present, but never the loud default. */
 
-.menu:not(.open) .search-box,
-.menu:not(.open) .menu-toggle,
-.menu:not(.open) .menu-hide { display: none; }
-.menu.open .menu-gate { display: none; }
+/* the search box is only useful when browsing the whole book */
+.menu:not(.browsing) .search-box { display: none; }
 
-.menu-gate {
+.menu-intro { margin: 14px 0 16px; }
+
+/* plain count line — "N drinks ready to pour" */
+.menu-intro.count,
+.menu-intro:not(.prompt) {
   text-align: center;
-  background: #111;
-  border: 1px solid #1e1e1e;
-  border-radius: 18px;
-  padding: 26px 20px 22px;
-  margin-top: 14px;
-}
-
-.gate-count {
   font-size: 0.62rem;
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: #f0c060;
-  margin-bottom: 18px;
+}
+.menu-intro b { color: #f0f0f0; font-weight: 600; }
+
+/* setup / change-bottles prompt */
+.menu-intro.prompt {
+  text-align: center;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 18px;
+  padding: 28px 22px 24px;
 }
 
-.gate-btn {
+.intro-head {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #f0f0f0;
+  margin-bottom: 8px;
+}
+
+.intro-sub {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #7a7a7a;
+  max-width: 300px;
+  margin: 0 auto 20px;
+}
+
+.intro-btn {
   width: 100%;
   padding: 16px;
   border: none;
@@ -384,42 +395,25 @@ input[type="range"]::-webkit-slider-thumb {
               inset 0 1px 0 rgba(255, 255, 255, 0.45);
   -webkit-tap-highlight-color: transparent;
 }
-.gate-btn:active { transform: scale(0.99); }
+.intro-btn:active { transform: scale(0.99); }
 
-.gate-all {
+/* the deliberately quiet way into the full book */
+.browse-link {
+  display: block;
   width: 100%;
-  margin-top: 12px;
-  padding: 11px;
+  margin-top: 22px;
+  padding: 10px;
   border: none;
   background: transparent;
-  color: #5e5e5e;
+  color: #565656;
   font-size: 0.68rem;
-  letter-spacing: 1.5px;
-  font-family: inherit;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.gate-all:hover { color: #f0c060; }
-
-.menu-hide {
-  width: 100%;
-  margin-top: 18px;
-  padding: 13px;
-  border: 1px solid #1e1e1e;
-  border-radius: 12px;
-  background: transparent;
-  color: #555;
-  font-size: 0.62rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  letter-spacing: 1px;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition: color 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
-.menu-hide:hover { border-color: #f0c060; color: #f0c060; }
+.browse-link:hover { color: #f0c060; }
 
 /* Ingredient combobox */
 .combo-dropdown {
