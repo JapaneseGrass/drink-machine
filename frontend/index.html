@@ -4,17 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine</title>
-  <link rel="stylesheet" href="/static/styles.css?v=5">
+  <link rel="stylesheet" href="/static/styles.css?v=7">
+  <link rel="stylesheet" href="/static/birthday.css?v=3">
 </head>
 <body>
+
+<div class="papel" id="papel"></div>
 
 <header>
   <h1>Drink Machine</h1>
   <div class="subtitle">Pick a drink &middot; tap to pour</div>
 </header>
 
-<div class="menu">
+<header class="fiesta-header">
+  <div class="fh-eyebrow" id="fh-eyebrow"></div>
+  <div class="fh-greeting" id="fh-greeting"></div>
+  <div class="fh-name" id="fh-name"></div>
+  <div class="fh-age" id="fh-age"></div>
+  <div class="fh-sub" id="fh-sub"></div>
+  <svg class="fh-mountains" viewBox="0 0 520 96" xmlns="http://www.w3.org/2000/svg"
+       preserveAspectRatio="none" aria-hidden="true">
+    <!-- Franklin Mountains: a far ridge and a nearer one, so the horizon
+         reads as depth rather than a flat bar -->
+    <path d="M0,96 L0,62 L34,44 L58,56 L88,26 L112,48 L142,34 L176,58 L206,40
+             L238,12 L272,42 L302,28 L338,54 L368,36 L402,58 L436,40 L470,60
+             L496,48 L520,58 L520,96 Z"
+          fill="#1d0a28" opacity="0.75"/>
+    <path d="M0,96 L0,80 L40,66 L74,80 L106,60 L142,78 L174,64 L208,82 L242,58
+             L276,76 L310,66 L346,84 L382,68 L416,80 L450,66 L486,78 L520,70
+             L520,96 Z"
+          fill="#0d0415" opacity="0.95"/>
+  </svg>
+</header>
+
+<div class="menu" id="menu">
   <div class="menu-title">Drink Menu</div>
+
+  <div class="menu-gate" id="menu-gate">
+    <div class="gate-count" id="gate-count">Checking the bar&hellip;</div>
+    <button class="gate-btn" id="gate-make">See What I Can Make</button>
+    <button class="gate-all" id="gate-all">Browse all recipes</button>
+  </div>
+
   <input type="text" class="search-box" id="search"
          placeholder="Search drinks or ingredients..."
          oninput="renderDrinks()" autocomplete="off">
@@ -23,13 +54,18 @@
     <button class="toggle-btn" id="toggle-make" onclick="setMode('make')">Can Make</button>
   </div>
   <div class="drink-list" id="drink-list"></div>
+  <button class="menu-hide" id="menu-hide" onclick="closeMenu()">&times; Close the menu</button>
 </div>
 
 <div class="nav">
+  <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()"></button>
   <a class="nav-link" href="/setup">Set Up Pumps &rsaquo;</a>
   <a class="nav-link" href="/network">Network &rsaquo;</a>
   <a class="nav-link" href="/test">Hardware Test &rsaquo;</a>
 </div>
+
+<div class="confetti-layer back" id="confetti-back"></div>
+<div class="confetti-layer" id="confetti"></div>
 
 <div class="modal-backdrop" id="modal" onclick="onModalClick(event)">
   <div class="modal-card">
@@ -54,6 +90,124 @@
   let menuMode = 'all';
   let lastAssignSig = '';
   let allDrinks = [];
+
+  // ----- Fiesta theme -------------------------------------------------
+  // Edit this block to reuse the theme for the next birthday.
+  const PARTY = {
+    greeting: 'Feliz Cumpleaños',
+    name: 'Ivan',
+    age: 28,
+    place: 'El Paso, Texas',
+    tagline: 'Años &middot; Salud &middot; Familia',
+    featured: 'paloma-sunrise',       // drink of the night, pinned to the top
+    featuredLabel: "Tonight's Drink",
+    pourLabel: 'Sirviendo',           // replaces "Pouring"
+    doneLabel: '¡Salud!',             // replaces "Done"
+    doneMessage: '¡Salud, Ivan! 🥂',  // replaces "Enjoy! 🍸"
+  };
+
+  const FIESTA_COLORS = ['#ff2e88', '#ffb020', '#17c3b2', '#ff6f5e', '#9b5de5', '#5ee6a8'];
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let fiesta = false;
+
+  function toggleTheme() {
+    applyTheme(!fiesta);
+    try { localStorage.setItem('dm-theme', fiesta ? 'fiesta' : 'default'); } catch {}
+    if (fiesta) burstConfetti(26, 2600);
+  }
+
+  function applyTheme(on) {
+    fiesta = on;
+    document.body.classList.toggle('fiesta', on);
+    document.getElementById('theme-toggle').textContent = on ? '🎉 Fiesta On' : '🎉 Fiesta Mode';
+    if (on) {
+      document.getElementById('fh-eyebrow').textContent = PARTY.place;
+      document.getElementById('fh-greeting').textContent = PARTY.greeting;
+      document.getElementById('fh-name').textContent = PARTY.name;
+      document.getElementById('fh-age').textContent = PARTY.age;
+      document.getElementById('fh-sub').innerHTML = PARTY.tagline;
+      document.title = `${PARTY.greeting}, ${PARTY.name}!`;
+      buildPapelPicado();
+    } else {
+      document.title = 'Drink Machine';
+      document.getElementById('papel').innerHTML = '';
+    }
+    if (allDrinks.length) renderDrinks();   // avoid an empty-state flash on first load
+  }
+
+  /* Cut-paper bunting: flags hung along a sagging string, each one
+     punched with a mask so the holes show the sky through. */
+  function buildPapelPicado() {
+    const host = document.getElementById('papel');
+    const W = Math.max(320, window.innerWidth);
+    const flagW = 46, sag = 18;
+    const n = Math.ceil(W / flagW) + 1;
+    const w = n * flagW;
+
+    // string: quadratic curve from (0,4) to (w,4), dipping in the middle
+    const p0 = 4, cy = 4 + sag * 2, p2 = 4;
+    const at = t => ({
+      y: (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * cy + t * t * p2,
+      x: t * w,
+      // slope of the curve, for hanging each flag square to the string
+      a: Math.atan2(2 * (1 - t) * (cy - p0) + 2 * t * (p2 - cy), w) * 180 / Math.PI,
+    });
+
+    let flags = '';
+    for (let i = 0; i < n; i++) {
+      const pt = at((i + 0.5) / n);
+      const color = FIESTA_COLORS[i % FIESTA_COLORS.length];
+      flags += `<g transform="translate(${pt.x.toFixed(1)},${pt.y.toFixed(1)}) rotate(${pt.a.toFixed(1)})">
+        <path d="M-23,0 L23,0 L23,33 L0,54 L-23,33 Z" fill="${color}"
+              mask="url(#pp-holes)" opacity="0.9"/>
+      </g>`;
+    }
+
+    host.innerHTML = `
+      <svg viewBox="0 0 ${w} 74" width="${w}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <mask id="pp-holes" maskUnits="userSpaceOnUse" x="-24" y="-1" width="48" height="56">
+            <rect x="-24" y="-1" width="48" height="56" fill="#fff"/>
+            <circle cx="0"    cy="11" r="5"/>
+            <circle cx="-11"  cy="20" r="3.2"/>
+            <circle cx="11"   cy="20" r="3.2"/>
+            <circle cx="0"    cy="24" r="3.6"/>
+            <circle cx="-6.5" cy="33" r="2.5"/>
+            <circle cx="6.5"  cy="33" r="2.5"/>
+            <circle cx="0"    cy="36" r="2.9"/>
+            <circle cx="0"    cy="45" r="2.2"/>
+          </mask>
+        </defs>
+        <path d="M0,${p0} Q${w / 2},${cy} ${w},${p2}"
+              fill="none" stroke="rgba(255,243,226,0.35)" stroke-width="2"/>
+        ${flags}
+      </svg>`;
+    // the SVG is drawn at natural width; let it fill the viewport
+    const svg = host.querySelector('svg');
+    svg.removeAttribute('width');
+  }
+
+  /* `front` puts the confetti over the pour overlay, where the celebration is
+     the whole point. Everything else falls behind the cards so the menu stays
+     readable. */
+  function burstConfetti(count, duration, front) {
+    if (reduceMotion) return;
+    const layer = document.getElementById(front ? 'confetti' : 'confetti-back');
+    for (let i = 0; i < count; i++) {
+      const bit = document.createElement('div');
+      bit.className = 'confetti-bit';
+      const dur = 2.6 + Math.random() * 2.2;
+      bit.style.left = (Math.random() * 100) + 'vw';
+      bit.style.background = FIESTA_COLORS[i % FIESTA_COLORS.length];
+      bit.style.animationDuration = dur + 's';
+      bit.style.animationDelay = (Math.random() * (duration / 1000)) + 's';
+      if (i % 3 === 0) bit.style.borderRadius = '50%';
+      if (i % 4 === 0) bit.style.width = '5px';
+      layer.appendChild(bit);
+      setTimeout(() => bit.remove(), (dur * 1000) + duration + 400);
+    }
+  }
+  // --------------------------------------------------------------------
 
   function escapeHtml(s) {
     return s.replace(/[&<>"']/g, c => (
@@ -100,6 +254,50 @@
     );
   }
 
+  // ----- Menu open/closed -----
+  // The list stays closed until someone asks for it. The primary way in is
+  // "what can I pour right now"; the full recipe book is a deliberate choice.
+  let menuOpen = false;
+
+  function openMenu(mode) {
+    menuOpen = true;
+    document.getElementById('menu').classList.add('open');
+    setMode(mode);                       // setMode re-renders
+    document.getElementById('menu').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function closeMenu() {
+    menuOpen = false;
+    document.getElementById('menu').classList.remove('open');
+    document.getElementById('search').value = '';
+    renderDrinks();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateGate(drinks, avail) {
+    const canMake = drinks.filter(d => d.available).length;
+    const count = document.getElementById('gate-count');
+    const primary = document.getElementById('gate-make');
+    const browse = document.getElementById('gate-all');
+
+    if (!avail.size) {
+      count.textContent = 'No bottles loaded yet';
+      primary.textContent = 'Set Up Pumps';
+      primary.onclick = () => { location.href = '/setup'; };
+    } else if (canMake === 0) {
+      count.textContent = 'Nothing pourable with the current bottles';
+      primary.textContent = 'Change Bottles';
+      primary.onclick = () => { location.href = '/setup'; };
+    } else {
+      count.textContent = `${canMake} drink${canMake === 1 ? '' : 's'} ready to pour`;
+      primary.textContent = 'See What I Can Make';
+      primary.onclick = () => openMenu('make');
+    }
+
+    browse.textContent = `Browse all ${allDrinks.length} recipes`;
+    browse.onclick = () => openMenu('all');
+  }
+
   function setMode(mode) {
     menuMode = mode;
     document.getElementById('toggle-all').classList.toggle('active', mode === 'all');
@@ -119,8 +317,25 @@
       return { ...d, available: missing.length === 0, missing };
     });
 
+    updateGate(drinks, avail);   // counts the whole list, so do it before filtering
+
+    // Closed: show nothing but the drink of the night, so the menu never
+    // greets anyone with 31 recipes they mostly can't pour.
+    if (!menuOpen) {
+      const hero = fiesta ? drinks.find(d => d.id === PARTY.featured) : null;
+      list.innerHTML = hero ? drinkCard(hero, true, avail) : '';
+      return;
+    }
+
     drinks = drinks.filter(d => drinkMatches(d, q));
     if (menuMode === 'make') drinks = drinks.filter(d => d.available);
+
+    // In fiesta mode the drink of the night leads the menu — but not while
+    // the guest is searching, where relevance order matters more.
+    if (fiesta && !q) {
+      const i = drinks.findIndex(d => d.id === PARTY.featured);
+      if (i > 0) drinks.unshift(drinks.splice(i, 1)[0]);
+    }
 
     if (drinks.length === 0) {
       const msg = menuMode === 'make'
@@ -130,23 +345,30 @@
       return;
     }
 
-    list.innerHTML = drinks.map(d => {
-      const ings = d.ingredients.map(i => `${escapeHtml(i.name)} (${i.ml}ml)`).join(' · ');
-      const garnish = d.garnish ? `<div class="drink-garnish">${escapeHtml(d.garnish)}</div>` : '';
-      const missing = (!d.available && d.missing.length)
-        ? `<div class="drink-missing">Missing: ${d.missing.map(escapeHtml).join(', ')}</div>`
-        : '';
-      const stateClass = avail.size ? (d.available ? ' available' : ' unavailable') : '';
-      return `
-        <div class="drink-card${stateClass}" onclick="openDrink('${d.id}')">
-          <div class="drink-art">${glassSVG(d.glass, d.color)}</div>
-          <div class="drink-category">${escapeHtml(d.category)}</div>
-          <div class="drink-name">${escapeHtml(d.name)}</div>
-          <div class="drink-ingredients">${ings}</div>
-          ${missing}
-          ${garnish}
-        </div>`;
-    }).join('');
+    list.innerHTML = drinks
+      .map(d => drinkCard(d, fiesta && !q && d.id === PARTY.featured, avail))
+      .join('');
+  }
+
+  function drinkCard(d, isFeatured, avail) {
+    const ings = d.ingredients.map(i => `${escapeHtml(i.name)} (${i.ml}ml)`).join(' · ');
+    const garnish = d.garnish ? `<div class="drink-garnish">${escapeHtml(d.garnish)}</div>` : '';
+    const missing = (!d.available && d.missing.length)
+      ? `<div class="drink-missing">Missing: ${d.missing.map(escapeHtml).join(', ')}</div>`
+      : '';
+    const stateClass = avail.size ? (d.available ? ' available' : ' unavailable') : '';
+    const ribbon = isFeatured
+      ? `<div class="featured-ribbon">${escapeHtml(PARTY.featuredLabel)}</div>` : '';
+    return `
+      <div class="drink-card${stateClass}${isFeatured ? ' featured' : ''}" onclick="openDrink('${d.id}')">
+        ${ribbon}
+        <div class="drink-art">${glassSVG(d.glass, d.color)}</div>
+        <div class="drink-category">${escapeHtml(d.category)}</div>
+        <div class="drink-name">${escapeHtml(d.name)}</div>
+        <div class="drink-ingredients">${ings}</div>
+        ${missing}
+        ${garnish}
+      </div>`;
   }
 
   function lighten(hex, amt) {
@@ -351,7 +573,7 @@
     pourOpenedAt = Date.now();
     const overlay = document.getElementById('pour-overlay');
     overlay.classList.remove('done');
-    document.getElementById('pour-label').textContent = 'Pouring';
+    document.getElementById('pour-label').textContent = fiesta ? PARTY.pourLabel : 'Pouring';
     document.getElementById('pour-drink-name').textContent = name || '';
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -370,8 +592,10 @@
     pourState = 'done';
     const overlay = document.getElementById('pour-overlay');
     overlay.classList.add('done');
-    document.getElementById('pour-label').textContent = 'Done';
-    document.getElementById('pour-current').textContent = 'Enjoy! 🍸';
+    document.getElementById('pour-label').textContent = fiesta ? PARTY.doneLabel : 'Done';
+    document.getElementById('pour-current').textContent =
+      fiesta ? PARTY.doneMessage : 'Enjoy! 🍸';
+    if (fiesta) burstConfetti(60, 1000, true);
     const fill = document.getElementById('pour-fill');
     fill.style.transition = 'width 0.3s ease';
     fill.style.width = '100%';
@@ -407,6 +631,26 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeDrink();
+  });
+
+  // ?fiesta=1 / ?fiesta=0 forces the theme and sticks — so a bookmark or QR
+  // code can land every guest's phone in fiesta mode with no toggling.
+  let savedTheme = 'default';
+  try { savedTheme = localStorage.getItem('dm-theme') || 'default'; } catch {}
+  const param = new URLSearchParams(location.search).get('fiesta');
+  if (param !== null) {
+    savedTheme = (param === '0' || param === 'false') ? 'default' : 'fiesta';
+    try { localStorage.setItem('dm-theme', savedTheme); } catch {}
+  }
+  applyTheme(savedTheme === 'fiesta');
+  if (fiesta) burstConfetti(22, 2600);   // a light welcome sprinkle, behind the cards
+
+  // the bunting is sized to the viewport, so re-cut it when that changes
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    if (!fiesta) return;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(buildPapelPicado, 200);
   });
 
   loadDrinks();

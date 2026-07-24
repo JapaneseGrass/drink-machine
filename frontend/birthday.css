@@ -1,0 +1,479 @@
+/* ============================================================
+   Fiesta theme — birthday aesthetic, scoped to body.fiesta
+   Nothing here applies unless the theme is switched on, so the
+   default look is untouched. Safe to delete the file (and the
+   <link> + toggle in index.html) after the party.
+
+   Palette: rosa mexicano, cempasúchil marigold, turquoise —
+   fiesta colors over an El Paso desert-sunrise sky, which is
+   also the Paloma Sunrise in a glass.
+   ============================================================ */
+
+body.fiesta {
+  --rosa: #ff2e88;
+  --marigold: #ffb020;
+  --turquoise: #17c3b2;
+  --coral: #ff6f5e;
+  --violet: #9b5de5;
+  --lime: #5ee6a8;
+  --cream: #fff3e2;
+
+  /* Solid colour on the body so the page canvas always paints — a scrolled
+     `background-attachment: fixed` gradient can leave a white band. The
+     gradient itself lives on a fixed layer underneath the content. */
+  background: #110519;
+  color: var(--cream);
+  padding-top: 78px;    /* room for the papel picado */
+}
+
+/* sunrise glow over the mountains, fading up into desert night */
+body.fiesta::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 150% 62% at 50% 0%,
+      rgba(255, 150, 60, 0.34) 0%,
+      rgba(255, 60, 120, 0.20) 32%,
+      rgba(120, 40, 130, 0.10) 55%,
+      rgba(0, 0, 0, 0) 72%),
+    linear-gradient(180deg, #2c0f38 0%, #1b0926 46%, #110519 100%);
+}
+
+/* ---------- papel picado (cut-paper bunting) ---------- */
+
+.papel {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 74px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 3;
+}
+body.fiesta .papel { display: block; }
+
+.papel svg {
+  display: block;
+  width: 100%;
+  height: 74px;
+  transform-origin: 50% 0;
+  animation: sway 7s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-0.5deg); }
+  50%      { transform: rotate(0.5deg); }
+}
+
+/* ---------- birthday header ---------- */
+
+.fiesta-header { display: none; }
+body.fiesta .fiesta-header {
+  display: block;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 10px 0 0;
+}
+/* Only the drinks page swaps its header for the birthday one; the setup /
+   network / test pages keep their own heading. */
+body.fiesta:not(.subpage) header:not(.fiesta-header) { display: none; }
+
+.fh-eyebrow {
+  font-size: 0.58rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--turquoise);
+  margin-bottom: 10px;
+}
+
+.fh-greeting {
+  /* script faces that ship with iOS/macOS — no web fonts, the Pi
+     may be serving an offline hotspot */
+  font-family: 'Snell Roundhand', 'Apple Chancery', 'Segoe Script',
+               'Brush Script MT', Georgia, serif;
+  font-style: italic;
+  font-size: 2.15rem;
+  line-height: 1.05;
+  font-weight: 600;
+  background: linear-gradient(100deg, var(--marigold), var(--rosa) 55%, var(--coral));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding: 0 8px 4px;
+}
+
+.fh-name {
+  font-size: 2.35rem;
+  font-weight: 300;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+  text-indent: 10px;        /* balance the trailing letter-spacing */
+  color: var(--cream);
+  margin-top: 2px;
+  text-shadow: 0 0 26px rgba(255, 46, 136, 0.45);
+}
+
+.fh-age {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  margin-top: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--marigold);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--marigold);
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 26px rgba(255, 176, 32, 0.30),
+              inset 0 0 20px rgba(255, 176, 32, 0.12);
+}
+
+.fh-sub {
+  font-size: 0.6rem;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: rgba(255, 243, 226, 0.5);
+  margin-top: 10px;
+}
+
+/* Franklin Mountains on the horizon */
+.fh-mountains {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: 62px;
+  margin: 14px auto -22px;
+}
+
+/* ---------- menu chrome ---------- */
+
+body.fiesta .menu { margin-top: 26px; }
+
+body.fiesta .menu-title {
+  color: var(--turquoise);
+  font-size: 0.62rem;
+}
+
+body.fiesta .search-box {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 176, 32, 0.22);
+  color: var(--cream);
+}
+body.fiesta .search-box::placeholder { color: rgba(255, 243, 226, 0.32); }
+body.fiesta .search-box:focus { border-color: var(--rosa); }
+
+body.fiesta .menu-toggle {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 176, 32, 0.18);
+}
+body.fiesta .toggle-btn { color: rgba(255, 243, 226, 0.45); }
+body.fiesta .toggle-btn.active {
+  background: linear-gradient(180deg, rgba(255, 46, 136, 0.30), rgba(255, 46, 136, 0.16));
+  color: #fff;
+}
+
+body.fiesta .menu-empty { color: rgba(255, 243, 226, 0.35); }
+
+/* ---------- menu gate ---------- */
+
+body.fiesta .menu-gate {
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(255, 176, 32, 0.24);
+}
+body.fiesta .gate-count { color: var(--turquoise); }
+body.fiesta .gate-btn {
+  background: linear-gradient(180deg, var(--marigold) 0%, var(--rosa) 100%);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 5px 18px rgba(255, 46, 136, 0.34),
+              inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+body.fiesta .gate-all { color: rgba(255, 243, 226, 0.5); }
+body.fiesta .gate-all:hover { color: var(--marigold); }
+body.fiesta .menu-hide {
+  border-color: rgba(255, 243, 226, 0.14);
+  color: rgba(255, 243, 226, 0.45);
+}
+body.fiesta .menu-hide:hover { border-color: var(--marigold); color: var(--marigold); }
+
+/* ---------- drink cards ---------- */
+
+body.fiesta .drink-card {
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.055) 0%,
+    rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(255, 243, 226, 0.10);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+body.fiesta .drink-card.available { border-color: rgba(255, 176, 32, 0.5); }
+body.fiesta .drink-category { color: var(--marigold); }
+body.fiesta .drink-name { color: var(--cream); }
+body.fiesta .drink-ingredients { color: rgba(255, 243, 226, 0.5); }
+body.fiesta .drink-garnish { color: rgba(255, 243, 226, 0.32); }
+body.fiesta .drink-missing { color: var(--coral); }
+
+/* the drink of the night */
+body.fiesta .drink-card.featured {
+  grid-column: 1 / -1;          /* full width, sits on top of the grid */
+  border: 1px solid rgba(255, 46, 136, 0.55);
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(255, 111, 94, 0.20), rgba(0,0,0,0) 70%),
+    linear-gradient(180deg, rgba(255, 46, 136, 0.10), rgba(255, 176, 32, 0.05));
+  box-shadow: 0 0 34px rgba(255, 46, 136, 0.22);
+  padding-top: 30px;
+  animation: featured-glow 3.6s ease-in-out infinite;
+}
+
+@keyframes featured-glow {
+  0%, 100% { box-shadow: 0 0 30px rgba(255, 46, 136, 0.18); }
+  50%      { box-shadow: 0 0 44px rgba(255, 46, 136, 0.34); }
+}
+
+body.fiesta .drink-card.featured .drink-art { height: 112px; margin-bottom: 6px; }
+body.fiesta .drink-card.featured .drink-art svg { width: 84px; height: 110px; }
+body.fiesta .drink-card.featured .drink-name { font-size: 1.3rem; font-weight: 400; }
+
+.featured-ribbon { display: none; }
+body.fiesta .drink-card.featured .featured-ribbon {
+  display: block;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.5rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #2a0716;
+  background: linear-gradient(180deg, var(--marigold), var(--coral));
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+body.fiesta .drink-card { position: relative; }
+
+/* ---------- modal ---------- */
+
+body.fiesta .modal-card {
+  background: linear-gradient(180deg, #2a0f36 0%, #170820 100%);
+  border-color: rgba(255, 176, 32, 0.26);
+}
+body.fiesta .modal-art {
+  background: radial-gradient(ellipse at 50% 26%,
+    rgba(255, 111, 94, 0.22) 0%, rgba(0, 0, 0, 0) 70%);
+}
+body.fiesta .modal-cat { color: var(--marigold); }
+body.fiesta .modal-name { color: var(--cream); }
+body.fiesta .modal-section-title {
+  color: rgba(255, 243, 226, 0.42);
+  border-bottom-color: rgba(255, 243, 226, 0.10);
+}
+body.fiesta .modal-ingredient { color: rgba(255, 243, 226, 0.85); }
+body.fiesta .modal-ingredient .ml { color: var(--marigold); }
+body.fiesta .modal-ingredient.missing .name { color: var(--coral); }
+body.fiesta .modal-history { color: rgba(255, 243, 226, 0.62); }
+body.fiesta .modal-garnish { color: rgba(255, 243, 226, 0.62); }
+body.fiesta .modal-availability.yes { color: var(--lime); }
+body.fiesta .modal-availability.no { color: var(--coral); }
+
+body.fiesta .pour-btn {
+  background: linear-gradient(180deg, var(--marigold) 0%, var(--rosa) 100%);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 22px rgba(255, 46, 136, 0.38),
+              inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+body.fiesta .pour-btn:disabled {
+  background: transparent;
+  border-color: rgba(255, 243, 226, 0.16);
+  color: rgba(255, 243, 226, 0.35);
+  text-shadow: none;
+  box-shadow: none;
+}
+
+/* ---------- pour overlay ---------- */
+
+body.fiesta .pour-overlay {
+  background: linear-gradient(180deg,
+    rgba(44, 15, 56, 0.95) 0%, rgba(17, 5, 25, 0.96) 100%);
+}
+body.fiesta .pour-ring { border-color: rgba(255, 243, 226, 0.14); border-top-color: var(--rosa); }
+body.fiesta .pour-label { color: var(--marigold); }
+body.fiesta .pour-drink-name { color: var(--cream); }
+body.fiesta .pour-current { color: rgba(255, 243, 226, 0.6); }
+body.fiesta .pour-current b { color: var(--cream); }
+body.fiesta .pour-progress { background: rgba(255, 255, 255, 0.08); }
+body.fiesta .pour-progress-fill { background: linear-gradient(90deg, var(--marigold), var(--rosa)); }
+body.fiesta .pour-overlay.done .pour-ring {
+  border-color: var(--lime);
+  border-top-color: var(--lime);
+}
+body.fiesta .pour-overlay.done .pour-progress-fill { background: var(--lime); }
+body.fiesta .pour-overlay.done .pour-time { color: var(--lime); }
+
+/* ---------- nav + theme toggle ---------- */
+
+body.fiesta .nav-link {
+  border-color: rgba(255, 243, 226, 0.14);
+  color: rgba(255, 243, 226, 0.45);
+}
+body.fiesta .nav-link:hover { border-color: var(--marigold); color: var(--marigold); }
+
+.theme-toggle {
+  display: inline-block;
+  margin: 5px 5px 0;
+  padding: 11px 20px;
+  border: 1px solid #1e1e1e;
+  border-radius: 12px;
+  background: transparent;
+  color: #555;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.theme-toggle:hover { border-color: #f0c060; color: #f0c060; }
+
+body.fiesta .theme-toggle {
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--marigold), var(--rosa));
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(255, 46, 136, 0.32);
+}
+
+/* ---------- the other pages (setup / network / test) ----------
+   These have no birthday furniture of their own, but they inherit the sky
+   and the accent colours so tapping through from the menu doesn't drop you
+   back into the black-and-gold theme. */
+
+body.fiesta h1 {
+  background: linear-gradient(100deg, var(--marigold), var(--rosa) 60%, var(--coral));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+body.fiesta .subtitle { color: rgba(255, 243, 226, 0.42); }
+
+body.fiesta .pump-card,
+body.fiesta .duration-row,
+body.fiesta .net-status,
+body.fiesta .net-row {
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(255, 243, 226, 0.10);
+}
+body.fiesta .pump-card.running {
+  border-color: var(--rosa);
+  box-shadow: 0 0 24px rgba(255, 46, 136, 0.22);
+}
+body.fiesta .pump-number { color: rgba(255, 243, 226, 0.3); }
+body.fiesta .pump-label { color: rgba(255, 243, 226, 0.8); }
+body.fiesta .pump-label.empty { color: rgba(255, 243, 226, 0.3); }
+body.fiesta .pump-card.running .pump-label { color: var(--marigold); }
+body.fiesta .pump-label-input {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: var(--marigold);
+  color: var(--cream);
+}
+
+body.fiesta .run-btn,
+body.fiesta .net-scan-btn,
+body.fiesta .stop-btn {
+  border-color: rgba(255, 243, 226, 0.16);
+  color: rgba(255, 243, 226, 0.5);
+}
+body.fiesta .run-btn:hover,
+body.fiesta .net-scan-btn:hover { border-color: var(--marigold); color: var(--marigold); }
+body.fiesta .pump-card.running .run-btn { border-color: var(--rosa); color: var(--rosa); }
+
+body.fiesta .cal-rate { color: rgba(255, 243, 226, 0.42); }
+body.fiesta .cal-rate b { color: var(--marigold); }
+body.fiesta .cal-btn { color: rgba(255, 243, 226, 0.42); }
+body.fiesta .cal-btn:hover { color: var(--marigold); }
+body.fiesta .duration-label { color: rgba(255, 243, 226, 0.42); }
+body.fiesta .duration-value { color: var(--marigold); }
+body.fiesta input[type="range"] { background: rgba(255, 243, 226, 0.16); }
+body.fiesta input[type="range"]::-webkit-slider-thumb { background: var(--rosa); }
+
+body.fiesta .net-btn {
+  background: linear-gradient(180deg, var(--marigold) 0%, var(--rosa) 100%);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+body.fiesta .net-label { color: rgba(255, 243, 226, 0.42); }
+body.fiesta .net-status { color: rgba(255, 243, 226, 0.7); }
+body.fiesta .net-status b { color: var(--cream); }
+body.fiesta .net-row { color: var(--cream); }
+body.fiesta .net-row .meta { color: rgba(255, 243, 226, 0.42); }
+body.fiesta .net-hint { color: rgba(255, 243, 226, 0.3); }
+body.fiesta .net-msg.ok { color: var(--lime); }
+body.fiesta .net-msg.err { color: var(--coral); }
+body.fiesta .combo-dropdown { background: #240d2e; border-color: rgba(255, 243, 226, 0.16); }
+body.fiesta .combo-option { color: rgba(255, 243, 226, 0.7); border-bottom-color: rgba(255, 243, 226, 0.08); }
+body.fiesta .combo-option:hover,
+body.fiesta .combo-option.active { background: rgba(255, 46, 136, 0.18); color: var(--marigold); }
+
+/* no bunting on these pages, so no gap is needed for it */
+body.fiesta.subpage { padding-top: 20px; }
+
+/* ---------- confetti ---------- */
+
+.confetti-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 250;   /* above the pour overlay, so the finish is celebrated */
+}
+
+/* The welcome sprinkle falls behind the cards — festive in the margins,
+   never on top of what someone is trying to read. */
+.confetti-layer.back { z-index: 0; }
+body.fiesta .menu,
+body.fiesta .nav { position: relative; z-index: 1; }
+
+.confetti-bit {
+  position: absolute;
+  top: -6vh;
+  width: 7px;
+  height: 11px;
+  opacity: 0;
+  border-radius: 1px;
+  will-change: transform, opacity;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0%   { transform: translateY(0) rotate(0deg);        opacity: 0; }
+  8%   {                                                opacity: 1; }
+  85%  {                                                opacity: 1; }
+  100% { transform: translateY(118vh) rotate(760deg);   opacity: 0; }
+}
+
+/* Respect motion preferences — keep the color, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .papel svg,
+  body.fiesta .drink-card.featured { animation: none; }
+  .confetti-layer { display: none; }
+}
+
+/* ---------- narrow phones ---------- */
+
+@media (max-width: 380px) {
+  .fh-greeting { font-size: 1.85rem; }
+  .fh-name { font-size: 2rem; letter-spacing: 7px; text-indent: 7px; }
+}
