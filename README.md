@@ -68,12 +68,66 @@ On iPhone, Safari → **Share → Add to Home Screen** gives an app-like icon.
 
 ## Changing the Pi's WiFi
 
-1. **From the app:** tap **Network** → enter the WiFi name + password → **Connect**.
-2. **From SSH:** `sudo nmcli device wifi connect "SSID" password "PASSWORD"`
+Easiest way: **from the app** — tap **Network** → enter the WiFi name + password
+→ **Connect**.
 
 If the Pi boots somewhere with no known network, it automatically raises its own
 **DrinkMachine** hotspot — join that from your phone and use the **Network** page.
 See [deploy/WIFI-SETUP.md](deploy/WIFI-SETUP.md).
+
+### From SSH (moving the Pi to a different network)
+
+Run this on the Pi, over an existing SSH or console session. Works for any
+target — home WiFi, a phone hotspot, a friend's network.
+
+```bash
+# 1. Rescan and confirm the target network is actually visible
+sudo nmcli device wifi rescan
+sleep 3
+sudo nmcli device wifi list | grep -i "SSID_NAME"
+
+# 2. Delete any old/broken saved profile for that network
+sudo nmcli connection delete "SSID_NAME" 2>/dev/null
+
+# 3. Connect in the background so it survives the SSH session dropping
+nohup sudo nmcli device wifi connect "SSID_NAME" password "WIFI_PASSWORD" > ~/wifi_switch.log 2>&1 &
+disown
+```
+
+Replace `SSID_NAME` and `WIFI_PASSWORD` with the target network's credentials.
+
+**Then:**
+1. Wait ~15–20 s for the connection to complete.
+2. Switch your own computer's WiFi to the same network — `.local` (mDNS) only
+   resolves when both devices are on the same subnet.
+3. Reconnect and check it landed:
+   ```bash
+   ssh japanesegrass@angelsraspberrypi4.local
+   cat ~/wifi_switch.log
+   nmcli device status
+   ```
+
+> You can skip step 2 entirely if you use the Tailscale address
+> (`ssh japanesegrass@100.125.19.8`) — it reaches the Pi from any network, as
+> long as the new network has internet.
+
+**Why the `nohup` matters.** Running `nmcli device wifi connect` straight over
+SSH is unreliable when you're switching *away* from the network your SSH session
+is riding on: the moment `wlan0` drops the old network the session's TCP
+connection dies, which can `SIGHUP` the `nmcli` process mid-negotiation and
+leave the Pi on neither network. `nohup … &` plus `disown` lets the attempt run
+to completion on the Pi whether or not your session survives.
+
+**Gotchas**
+- **`sudo` is required on the delete step.** Without it the delete fails
+  silently (`2>/dev/null` hides the reason) and leaves the broken profile in
+  place, so the next connect dies with
+  `802-11-wireless-security.key-mgmt: property is missing`.
+- **iPhone Personal Hotspot stops broadcasting its SSID** once you leave the
+  Personal Hotspot settings screen or the phone locks — even with the toggle
+  still showing "on". Keep that screen open and the phone unlocked and nearby
+  while you run the sequence, or the Pi never sees the network at all
+  (`Error: No network with SSID 'X' found`).
 
 ## SSH (including from another network)
 
