@@ -7,6 +7,12 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "drink_machine.db")
 # in place with its actual liquid, which captures both pump variance and viscosity.
 DEFAULT_ML_PER_S = round(25 / 15, 4)  # ~1.6667 ml/s
 
+# The party theme the front page wears. Held on the server rather than in
+# each browser, so the host flips it once and every phone on the WiFi
+# follows on its next status poll.
+DEFAULT_THEME = "desert"
+THEMES = ("default", "fiesta", "desert")
+
 
 def _conn():
     conn = sqlite3.connect(DB_PATH)
@@ -36,6 +42,38 @@ def init_db():
                 "INSERT OR IGNORE INTO pump_assignments (pump_id, ingredient) VALUES (?, '')",
                 (pump_id,),
             )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS settings (
+                key   TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+            """
+        )
+
+
+def get_setting(key: str, default: str = "") -> str:
+    with _conn() as conn:
+        row = conn.execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
+    return row["value"] if row else default
+
+
+def set_setting(key: str, value: str) -> None:
+    with _conn() as conn:
+        conn.execute(
+            "INSERT INTO settings (key, value) VALUES (?, ?) "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+            (key, value),
+        )
+
+
+def get_theme() -> str:
+    theme = get_setting("theme", DEFAULT_THEME)
+    return theme if theme in THEMES else DEFAULT_THEME
+
+
+def set_theme(theme: str) -> None:
+    set_setting("theme", theme)
 
 
 def get_assignments() -> dict[int, str]:

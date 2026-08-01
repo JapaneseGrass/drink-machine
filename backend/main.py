@@ -58,6 +58,10 @@ class MaintenanceRequest(BaseModel):
     seconds: float = 5.0
 
 
+class ThemeRequest(BaseModel):
+    theme: str
+
+
 @app.get("/")
 def index():
     return FileResponse(os.path.join(FRONTEND, "index.html"))
@@ -226,6 +230,20 @@ def wifi_connect(req: WifiConnectRequest):
     return wifi.connect(ssid, req.password)
 
 
+@app.get("/api/theme")
+def get_theme():
+    return {"theme": storage.get_theme(), "themes": list(storage.THEMES)}
+
+
+@app.post("/api/theme")
+def set_theme(req: ThemeRequest):
+    theme = req.theme.strip().lower()
+    if theme not in storage.THEMES:
+        raise HTTPException(400, f"Unknown theme. Pick one of: {', '.join(storage.THEMES)}")
+    storage.set_theme(theme)
+    return {"status": "ok", "theme": theme}
+
+
 @app.get("/api/status")
 def status():
     assignments = storage.get_assignments()
@@ -233,6 +251,9 @@ def status():
     return {
         "busy": controller.is_busy(),
         "pour": controller.pour_info(),
+        # Ships with every status poll so a theme the host picks reaches
+        # every phone already sitting on the page.
+        "theme": storage.get_theme(),
         "pumps": {
             i: {
                 "running": controller.is_running(i),
