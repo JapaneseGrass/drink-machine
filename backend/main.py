@@ -51,7 +51,11 @@ class WifiConnectRequest(BaseModel):
 
 
 class PourRequest(BaseModel):
-    scale: float = 1.0  # multiplies every ingredient (size/strength)
+    scale: float = 1.0     # multiplies every ingredient (size)
+    # Multiplies the alcoholic ingredients only. 1.0 is the recipe as written;
+    # the UI's "Light" pour sends 0.6, which keeps the drink the same size and
+    # just takes the edge off it.
+    strength: float = 1.0
 
 
 class MaintenanceRequest(BaseModel):
@@ -136,6 +140,7 @@ async def pour(drink_id: str, req: PourRequest | None = None):
         raise HTTPException(409, "Machine is busy")
 
     scale = max(0.25, min((req.scale if req and req.scale else 1.0), 3.0))
+    strength = max(0.2, min((req.strength if req and req.strength else 1.0), 1.0))
 
     assignments = storage.get_assignments()
     rates = storage.get_flow_rates()
@@ -144,11 +149,13 @@ async def pour(drink_id: str, req: PourRequest | None = None):
     }
 
     steps = []
-    for ing in drink["ingredients"]:
+    for ing in recipes.pumped_ingredients(drink):
         pid = name_to_pump.get(ing["name"].strip().lower())
         if pid is None:
             raise HTTPException(400, f"No pump loaded with {ing['name']}")
         ml = ing["ml"] * scale
+        if recipes.is_spirit(ing["name"]):
+            ml *= strength
         seconds = ml / rates.get(pid, storage.DEFAULT_ML_PER_S)
         steps.append(
             {"pump": pid, "ingredient": ing["name"], "ml": round(ml, 1), "seconds": round(seconds, 2)}
@@ -159,6 +166,7 @@ async def pour(drink_id: str, req: PourRequest | None = None):
         "status": "pouring",
         "drink": drink["name"],
         "scale": scale,
+        "strength": strength,
         "steps": steps,
         "estimated_seconds": estimate_pour_seconds([s["seconds"] for s in steps]),
         "sequential_seconds": round(sum(s["seconds"] for s in steps), 1),
@@ -197,7 +205,13 @@ async def rinse(req: MaintenanceRequest):
 @app.get("/api/drinks")
 def drinks(q: str = ""):
     results = recipes.search(q)
-    return {"count": len(results), "drinks": results}
+    # The frontend redraws the potency meter when someone picks "Light", so it
+    # needs the same multiplier the pour endpoint applies.
+    return {
+        "count": len(results),
+        "drinks": results,
+        "light_strength": recipes.LIGHT_STRENGTH,
+    }
 
 
 @app.get("/api/drinks/available")
