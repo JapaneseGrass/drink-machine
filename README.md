@@ -77,8 +77,21 @@ See [deploy/WIFI-SETUP.md](deploy/WIFI-SETUP.md).
 
 ### From SSH (moving the Pi to a different network)
 
-Run this on the Pi, over an existing SSH or console session. Works for any
-target — home WiFi, a phone hotspot, a friend's network.
+Run [`deploy/wifi-switch.sh`](deploy/wifi-switch.sh) on the Pi, over an existing
+SSH or console session. **Type the network name and password once** — it rescans,
+checks the network is actually in range, clears any stale profile, and connects
+in the background:
+
+```bash
+~/drink-machine/deploy/wifi-switch.sh "Network Name" "password"
+```
+
+Works for any target — home WiFi, a phone hotspot, a friend's network. It stops
+with a clear message if the network isn't in range, rather than half-switching
+you.
+
+<details>
+<summary>What it runs, if you'd rather do it by hand</summary>
 
 ```bash
 # 1. Rescan and confirm the target network is actually visible
@@ -93,8 +106,7 @@ sudo nmcli connection delete "SSID_NAME" 2>/dev/null
 nohup sudo nmcli device wifi connect "SSID_NAME" password "WIFI_PASSWORD" > ~/wifi_switch.log 2>&1 &
 disown
 ```
-
-Replace `SSID_NAME` and `WIFI_PASSWORD` with the target network's credentials.
+</details>
 
 **Then:**
 1. Wait ~15–20 s for the connection to complete.
@@ -119,9 +131,9 @@ leave the Pi on neither network. `nohup … &` plus `disown` lets the attempt ru
 to completion on the Pi whether or not your session survives.
 
 **Gotchas**
-- **`sudo` is required on the delete step.** Without it the delete fails
-  silently (`2>/dev/null` hides the reason) and leaves the broken profile in
-  place, so the next connect dies with
+- **`sudo` is required on the delete step** (the script does this for you).
+  Without it the delete fails silently (`2>/dev/null` hides the reason) and
+  leaves the broken profile in place, so the next connect dies with
   `802-11-wireless-security.key-mgmt: property is missing`.
 - **iPhone Personal Hotspot stops broadcasting its SSID** once you leave the
   Personal Hotspot settings screen or the phone locks — even with the toggle
