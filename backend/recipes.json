@@ -433,5 +433,326 @@
     ],
     "garnish": "Tajin/salt rim, lime; top with a Mexican lager",
     "history": "A Mexican beer cocktail: a cold lager built over lime, hot sauce, and savory seasonings, often with Clamato in the border and Tex-Mex style. It is a beloved hangover cure across Mexico and El Paso. The machine pours the savory mix — top it with beer by hand."
+  },
+  {
+    "id": "tokyo-tea",
+    "name": "Tokyo Tea",
+    "category": "Mixed",
+    "glass": "highball",
+    "color": "#7ac93f",
+    "ingredients": [
+      { "name": "Vodka", "ml": 15 },
+      { "name": "Gin", "ml": 15 },
+      { "name": "White Rum", "ml": 15 },
+      { "name": "Tequila", "ml": 15 },
+      { "name": "Midori", "ml": 20 },
+      { "name": "Sweet and Sour Mix", "ml": 45 },
+      { "name": "Lemon-Lime Soda", "ml": 60, "manual": true }
+    ],
+    "garnish": "Lemon wheel and a cherry",
+    "history": "A Long Island variant that swaps the cola float for Midori, turning the glass a bright radioactive green. It belongs to the family of overbuilt 1970s–80s American bar drinks that stack the whole well into one tall glass. Top it with Sprite by hand."
+  },
+  {
+    "id": "adios-mfer",
+    "name": "Adios Mfer",
+    "category": "Mixed",
+    "glass": "highball",
+    "color": "#2f8fd8",
+    "ingredients": [
+      { "name": "Vodka", "ml": 15 },
+      { "name": "Gin", "ml": 15 },
+      { "name": "White Rum", "ml": 15 },
+      { "name": "Tequila", "ml": 15 },
+      { "name": "Blue Curacao", "ml": 20 },
+      { "name": "Sweet and Sour Mix", "ml": 45 },
+      { "name": "Lemon-Lime Soda", "ml": 60, "manual": true }
+    ],
+    "garnish": "Lemon wheel",
+    "history": "The blue sibling of the Tokyo Tea — same five-spirit Long Island frame, with blue curacao standing in for the orange liqueur and the cola. Usually shortened to AMF on bar menus, for reasons the full name makes obvious. Top it with Sprite by hand."
+  },
+  {
+    "id": "midori-sour",
+    "name": "Midori Sour",
+    "category": "Midori",
+    "glass": "rocks",
+    "color": "#9ed94a",
+    "ingredients": [
+      { "name": "Midori", "ml": 50 },
+      { "name": "Sweet and Sour Mix", "ml": 60 },
+      { "name": "Lemon-Lime Soda", "ml": 45, "manual": true }
+    ],
+    "garnish": "Cherry and a lime wheel",
+    "history": "The drink that made Midori famous in the United States after Suntory launched the melon liqueur stateside in the late 1970s. Sweet, tart, and unmistakably green — a gateway cocktail for anyone who claims not to like liquor."
+  },
+  {
+    "id": "blue-lagoon",
+    "name": "Blue Lagoon",
+    "category": "Vodka",
+    "glass": "highball",
+    "color": "#2f9fe0",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Blue Curacao", "ml": 20 },
+      { "name": "Sweet and Sour Mix", "ml": 45 },
+      { "name": "Lemon-Lime Soda", "ml": 90, "manual": true }
+    ],
+    "garnish": "Orange slice and a cherry",
+    "history": "A vodka-and-blue-curacao highball usually credited to Andy MacElhone at Harry's New York Bar in Paris. Its whole appeal is the color: a tropical-pool blue that photographs better than it has any right to."
+  },
+  {
+    "id": "blue-margarita",
+    "name": "Blue Margarita",
+    "category": "Tequila",
+    "glass": "margarita",
+    "color": "#2f8fd8",
+    "ingredients": [
+      { "name": "Tequila", "ml": 50 },
+      { "name": "Blue Curacao", "ml": 25 },
+      { "name": "Lime Juice", "ml": 15 },
+      { "name": "Sweet and Sour Mix", "ml": 30 }
+    ],
+    "garnish": "Salt rim, lime wheel",
+    "history": "A standard margarita with blue curacao in place of triple sec — both are orange liqueurs, so the flavor barely moves while the color changes completely. A fixture of American Tex-Mex restaurants since the 1970s."
+  },
+  {
+    "id": "blue-kamikaze",
+    "name": "Blue Kamikaze",
+    "category": "Vodka",
+    "glass": "coupe",
+    "color": "#2b86d6",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 },
+      { "name": "Blue Curacao", "ml": 20 },
+      { "name": "Lime Juice", "ml": 20 }
+    ],
+    "garnish": "Lime wheel",
+    "history": "The Kamikaze — vodka, orange liqueur, lime — recolored with blue curacao. The original was an American bar drink of the 1970s that spent most of the 1980s and 90s being served as a shot."
+  },
+  {
+    "id": "green-iguana",
+    "name": "Green Iguana",
+    "category": "Tequila",
+    "glass": "highball",
+    "color": "#8fd14a",
+    "ingredients": [
+      { "name": "Tequila", "ml": 45 },
+      { "name": "Midori", "ml": 25 },
+      { "name": "Sweet and Sour Mix", "ml": 60 }
+    ],
+    "garnish": "Lime wedge",
+    "history": "A melon margarita by another name: tequila and Midori over sour mix. A Tex-Mex bar staple, poured either on the rocks or blended into a frozen."
+  },
+  {
+    "id": "green-demon",
+    "name": "Green Demon",
+    "category": "Mixed",
+    "glass": "highball",
+    "color": "#86d13c",
+    "ingredients": [
+      { "name": "Vodka", "ml": 25 },
+      { "name": "White Rum", "ml": 25 },
+      { "name": "Midori", "ml": 25 },
+      { "name": "Sweet and Sour Mix", "ml": 45 },
+      { "name": "Lemon-Lime Soda", "ml": 60, "manual": true }
+    ],
+    "garnish": "Lime wheel",
+    "history": "A party punch in a glass — vodka and rum hidden under melon liqueur and sour mix. It drinks far easier than it pours, which is the entire trap. Top it with Sprite by hand."
+  },
+  {
+    "id": "illusion",
+    "name": "Illusion",
+    "category": "Midori",
+    "glass": "coupe",
+    "color": "#6fc9a8",
+    "ingredients": [
+      { "name": "Vodka", "ml": 25 },
+      { "name": "Midori", "ml": 25 },
+      { "name": "Blue Curacao", "ml": 15 },
+      { "name": "Sweet and Sour Mix", "ml": 45 }
+    ],
+    "garnish": "Lime wheel",
+    "history": "Melon and orange liqueur over vodka, landing somewhere between green and teal depending on the pour. Named for the color, which never quite settles on one."
+  },
+  {
+    "id": "japanese-slipper",
+    "name": "Japanese Slipper",
+    "category": "Midori",
+    "glass": "coupe",
+    "color": "#a8d94a",
+    "ingredients": [
+      { "name": "Midori", "ml": 40 },
+      { "name": "Blue Curacao", "ml": 20 },
+      { "name": "Sweet and Sour Mix", "ml": 35 }
+    ],
+    "garnish": "Cherry",
+    "history": "Created in Melbourne in the mid-1980s by Jean-Paul Bourguignon at Mietta's restaurant, and one of the few cocktails to come out of Australia and stick. Traditionally equal parts melon liqueur, orange liqueur, and lemon juice."
+  },
+  {
+    "id": "blue-shark",
+    "name": "Blue Shark",
+    "category": "Mixed",
+    "glass": "rocks",
+    "color": "#3a8fd0",
+    "ingredients": [
+      { "name": "Vodka", "ml": 30 },
+      { "name": "Tequila", "ml": 30 },
+      { "name": "Blue Curacao", "ml": 20 }
+    ],
+    "garnish": "Lime wedge",
+    "history": "Vodka and tequila in the same glass with blue curacao doing all the talking. Short, cold, and considerably stronger than the color suggests."
+  },
+  {
+    "id": "tequila-sour",
+    "name": "Tequila Sour",
+    "category": "Tequila",
+    "glass": "rocks",
+    "color": "#e8c46a",
+    "ingredients": [
+      { "name": "Tequila", "ml": 50 },
+      { "name": "Sweet and Sour Mix", "ml": 60 }
+    ],
+    "garnish": "Lime wedge",
+    "history": "The sour template — spirit, citrus, sugar — applied to tequila. It is the margarita's plainer ancestor: drop the orange liqueur and you are left with this."
+  },
+  {
+    "id": "vodka-sour",
+    "name": "Vodka Sour",
+    "category": "Vodka",
+    "glass": "rocks",
+    "color": "#ecd98a",
+    "ingredients": [
+      { "name": "Vodka", "ml": 50 },
+      { "name": "Sweet and Sour Mix", "ml": 60 }
+    ],
+    "garnish": "Lemon wheel and a cherry",
+    "history": "The most neutral member of the sour family, which is exactly why it gets ordered — all citrus and sugar, with the spirit staying out of the way."
+  },
+  {
+    "id": "gin-sour",
+    "name": "Gin Sour",
+    "category": "Gin",
+    "glass": "rocks",
+    "color": "#e8e39a",
+    "ingredients": [
+      { "name": "Gin", "ml": 50 },
+      { "name": "Sweet and Sour Mix", "ml": 60 }
+    ],
+    "garnish": "Lemon wheel",
+    "history": "One of the oldest sours on record, predating the whiskey sour's American popularity. Add soda water and you have a Tom Collins."
+  },
+  {
+    "id": "rum-sour",
+    "name": "Rum Sour",
+    "category": "Rum",
+    "glass": "rocks",
+    "color": "#ecd9a0",
+    "ingredients": [
+      { "name": "White Rum", "ml": 50 },
+      { "name": "Sweet and Sour Mix", "ml": 60 }
+    ],
+    "garnish": "Lime wheel",
+    "history": "Effectively a daiquiri built on sour mix instead of fresh lime and sugar — the same drink the Caribbean has been making since the 1890s, taken the quick way."
+  },
+  {
+    "id": "gin-gimlet",
+    "name": "Gin Gimlet",
+    "category": "Gin",
+    "glass": "coupe",
+    "color": "#dbe8a8",
+    "ingredients": [
+      { "name": "Gin", "ml": 50 },
+      { "name": "Lime Juice", "ml": 20 },
+      { "name": "Sweet and Sour Mix", "ml": 25 }
+    ],
+    "garnish": "Lime wheel",
+    "history": "Gin and lime, traditionally with lime cordial. The often-repeated story ties it to British sailors taking lime against scurvy; the link is popular but not well documented."
+  },
+  {
+    "id": "shot-tequila",
+    "name": "Tequila Shot",
+    "category": "Shot",
+    "glass": "shot",
+    "color": "#f0e0a8",
+    "ingredients": [
+      { "name": "Tequila", "ml": 45 }
+    ],
+    "garnish": "Salt and a lime wedge",
+    "history": "Straight pour, no ceremony required — though the salt-and-lime ritual is an American addition, not a Mexican one. In Mexico, good tequila is usually sipped."
+  },
+  {
+    "id": "shot-vodka",
+    "name": "Vodka Shot",
+    "category": "Shot",
+    "glass": "shot",
+    "color": "#e8f0f5",
+    "ingredients": [
+      { "name": "Vodka", "ml": 45 }
+    ],
+    "garnish": "Cold, ideally",
+    "history": "The plainest thing the machine can do. Traditionally served near-freezing across Eastern Europe and Russia, and traditionally accompanied by food."
+  },
+  {
+    "id": "shot-gin",
+    "name": "Gin Shot",
+    "category": "Shot",
+    "glass": "shot",
+    "color": "#e2f0e6",
+    "ingredients": [
+      { "name": "Gin", "ml": 45 }
+    ],
+    "garnish": "Lime wedge",
+    "history": "Rarely ordered, occasionally deserved. Gin is juniper-forward by definition, so a straight pour tastes like a very small forest."
+  },
+  {
+    "id": "shot-rum",
+    "name": "White Rum Shot",
+    "category": "Shot",
+    "glass": "shot",
+    "color": "#f0ead8",
+    "ingredients": [
+      { "name": "White Rum", "ml": 45 }
+    ],
+    "garnish": "Lime wedge",
+    "history": "Light rum, filtered and aged briefly, is built for mixing — which makes taking it neat a statement of some kind."
+  },
+  {
+    "id": "shot-midori",
+    "name": "Midori Shot",
+    "category": "Shot",
+    "glass": "shot",
+    "color": "#8fd13c",
+    "ingredients": [
+      { "name": "Midori", "ml": 45 }
+    ],
+    "garnish": "None",
+    "history": "Suntory's melon liqueur, launched in the United States in 1978 at a Studio 54 party. Sweet enough to count as dessert and green enough to see from across the room."
+  },
+  {
+    "id": "shot-blue-kamikaze",
+    "name": "Blue Kamikaze Shot",
+    "category": "Shot",
+    "glass": "shot",
+    "color": "#2b86d6",
+    "ingredients": [
+      { "name": "Vodka", "ml": 25 },
+      { "name": "Blue Curacao", "ml": 12 },
+      { "name": "Lime Juice", "ml": 12 }
+    ],
+    "garnish": "Lime wedge",
+    "history": "The shot form of the Blue Kamikaze, and the way it is most often served. Bright blue, sharply tart, and gone in one motion."
+  },
+  {
+    "id": "melon-ball-shot",
+    "name": "Melon Ball Shot",
+    "category": "Shot",
+    "glass": "shot",
+    "color": "#a6dc55",
+    "ingredients": [
+      { "name": "Midori", "ml": 25 },
+      { "name": "Vodka", "ml": 20 },
+      { "name": "Sweet and Sour Mix", "ml": 15 }
+    ],
+    "garnish": "None",
+    "history": "Named for the scooped melon it is meant to taste like. Normally built with pineapple or orange juice; on sour mix it comes out sharper and considerably greener."
   }
 ]
