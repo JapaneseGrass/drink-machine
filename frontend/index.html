@@ -4,12 +4,140 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Drink Machine</title>
-  <link rel="stylesheet" href="/static/styles.css?v=8">
-  <link rel="stylesheet" href="/static/birthday.css?v=4">
+  <link rel="stylesheet" href="/static/styles.css?v=9">
+  <link rel="stylesheet" href="/static/birthday.css?v=5">
+  <link rel="stylesheet" href="/static/desert.css?v=5">
 </head>
 <body>
 
 <div class="papel" id="papel"></div>
+
+<!-- ===================== UGNAR'S BAR SCENE =====================
+     Same pixel desert as the party invite: sky, stars, dunes, cacti,
+     tumbleweed, CRT scanlines. The invite's sun is gone — the drinks
+     the machine can pour right now float there instead. -->
+<div class="desert-scene" id="desert-scene" aria-hidden="true">
+  <div class="d-sky"></div>
+  <div class="d-stars" id="d-stars"></div>
+
+  <div class="d-cloud" style="top:16%; animation-duration:75s;">
+    <span style="left:0;    top:8px; width:64px; height:10px;"></span>
+    <span style="left:12px; top:0;   width:40px; height:10px;"></span>
+    <span style="left:52px; top:8px; width:26px; height:10px;"></span>
+  </div>
+  <div class="d-cloud" style="top:28%; animation-duration:95s; animation-delay:-30s; opacity:.6;">
+    <span style="left:0;    top:6px; width:48px; height:8px;"></span>
+    <span style="left:10px; top:0;   width:30px; height:8px;"></span>
+  </div>
+
+  <!-- Crescent moon, carried over from the invite -->
+  <div class="d-moon"></div>
+
+  <div class="d-dunes">
+    <div class="d-dune" style="bottom:0; height:78%;">
+      <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+        <path fill="var(--dune-1)" d="M0 14 L20 10 L40 15 L64 8 L88 14 L108 9 L120 13 L120 40 L0 40 Z"/>
+      </svg>
+    </div>
+    <div class="d-dune" style="bottom:0; height:58%;">
+      <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+        <path fill="var(--dune-2)" d="M0 18 L26 12 L52 20 L78 12 L104 18 L120 14 L120 40 L0 40 Z"/>
+      </svg>
+    </div>
+    <div class="d-dune" style="bottom:0; height:36%;">
+      <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+        <path fill="var(--dune-3)" d="M0 20 L30 14 L60 22 L92 13 L120 20 L120 40 L0 40 Z"/>
+      </svg>
+    </div>
+    <div class="d-dune" style="bottom:0; height:18%;">
+      <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+        <path fill="var(--dune-4)" d="M0 12 L120 12 L120 40 L0 40 Z"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="d-cacti">
+    <div class="d-cactus" style="left:4%; bottom:13%; width:clamp(70px,13vw,130px);">
+      <svg viewBox="0 0 32 56" preserveAspectRatio="xMidYMax meet">
+        <rect x="12" y="6"  width="8" height="50" fill="var(--cactus)"/>
+        <rect x="4"  y="22" width="4" height="4"  fill="var(--cactus)"/>
+        <rect x="4"  y="26" width="8" height="4"  fill="var(--cactus)"/>
+        <rect x="4"  y="18" width="4" height="8"  fill="var(--cactus)"/>
+        <rect x="24" y="18" width="4" height="4"  fill="var(--cactus)"/>
+        <rect x="20" y="22" width="8" height="4"  fill="var(--cactus)"/>
+        <rect x="24" y="14" width="4" height="8"  fill="var(--cactus)"/>
+        <rect x="12" y="6"  width="2" height="50" fill="var(--cactus-lite)"/>
+        <rect x="4"  y="18" width="2" height="8"  fill="var(--cactus-lite)"/>
+        <rect x="18" y="6"  width="2" height="50" fill="var(--cactus-dark)"/>
+        <rect x="14" y="4"  width="4" height="2"  fill="var(--cactus)"/>
+      </svg>
+    </div>
+    <div class="d-cactus" style="left:22%; bottom:12%; width:clamp(32px,5vw,54px);">
+      <svg viewBox="0 0 20 24" preserveAspectRatio="xMidYMax meet">
+        <rect x="4"  y="6" width="12" height="18" fill="var(--cactus)"/>
+        <rect x="4"  y="6" width="2"  height="18" fill="var(--cactus-lite)"/>
+        <rect x="14" y="6" width="2"  height="18" fill="var(--cactus-dark)"/>
+        <rect x="7"  y="4" width="6"  height="2"  fill="var(--cactus)"/>
+        <rect x="8"  y="1" width="4"  height="3"  fill="var(--gold)"/>
+      </svg>
+    </div>
+    <div class="d-cactus" style="right:11%; bottom:14%; width:clamp(52px,9vw,96px);">
+      <svg viewBox="0 0 32 48" preserveAspectRatio="xMidYMax meet">
+        <rect x="13" y="4"  width="7" height="44" fill="var(--cactus)"/>
+        <rect x="24" y="16" width="4" height="4"  fill="var(--cactus)"/>
+        <rect x="20" y="20" width="8" height="4"  fill="var(--cactus)"/>
+        <rect x="24" y="12" width="4" height="8"  fill="var(--cactus)"/>
+        <rect x="13" y="4"  width="2" height="44" fill="var(--cactus-lite)"/>
+        <rect x="18" y="4"  width="2" height="44" fill="var(--cactus-dark)"/>
+      </svg>
+    </div>
+    <div class="d-cactus" style="right:3%; bottom:11%; width:clamp(24px,4vw,40px);">
+      <svg viewBox="0 0 16 16" preserveAspectRatio="xMidYMax meet">
+        <rect x="6"  y="6" width="4" height="10" fill="var(--cactus)"/>
+        <rect x="2"  y="9" width="4" height="3"  fill="var(--cactus)"/>
+        <rect x="10" y="8" width="4" height="3"  fill="var(--cactus)"/>
+      </svg>
+    </div>
+
+    <div class="d-tumbleweed">
+      <svg viewBox="0 0 16 16">
+        <g fill="#8a5a3c">
+          <rect x="4" y="1"  width="8"  height="2"/>
+          <rect x="2" y="4"  width="12" height="2"/>
+          <rect x="1" y="7"  width="14" height="2"/>
+          <rect x="2" y="10" width="12" height="2"/>
+          <rect x="4" y="13" width="8"  height="2"/>
+          <rect x="7" y="0"  width="2"  height="16"/>
+          <rect x="0" y="7"  width="16" height="2"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="d-scanlines"></div>
+</div>
+
+<!-- The swivel table: one drink front and centre, the rest waiting -->
+<div class="desert-stage" id="desert-stage">
+  <div class="d-card">
+    <div class="d-eyebrow" id="d-eyebrow"></div>
+    <h1 class="d-title" id="d-title"></h1>
+    <div class="d-sub" id="d-sub"></div>
+  </div>
+
+  <div class="swivel" id="swivel">
+    <button class="swivel-arrow left"  id="swivel-prev" aria-label="Previous drink">&lsaquo;</button>
+    <button class="swivel-arrow right" id="swivel-next" aria-label="Next drink">&rsaquo;</button>
+  </div>
+
+  <div class="swivel-caption" id="swivel-caption">
+    <div class="sc-cat"  id="sc-cat"></div>
+    <div class="sc-name" id="sc-name"></div>
+    <div class="sc-potency" id="sc-potency"></div>
+    <div class="sc-hint" id="sc-hint"></div>
+    <div class="swivel-dots" id="swivel-dots"></div>
+  </div>
+</div>
 
 <header>
   <h1>Drink Machine</h1>
@@ -51,11 +179,24 @@
   <button class="browse-link" id="browse-link" onclick="toggleBrowse()"></button>
 </div>
 
-<div class="nav">
-  <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()"></button>
-  <a class="nav-link" href="/setup">Set Up Pumps &rsaquo;</a>
-  <a class="nav-link" href="/network">Network &rsaquo;</a>
-  <a class="nav-link" href="/test">Hardware Test &rsaquo;</a>
+<!-- Host controls — theme switching plus the machine pages. Deliberately
+     understated so guests ignore it and the host can always find it. -->
+<button class="host-btn" id="host-btn" onclick="openHost()">HOST</button>
+
+<div class="host-backdrop" id="host-panel" onclick="onHostClick(event)">
+  <div class="host-card">
+    <button class="host-close" onclick="closeHost()" aria-label="Close">X</button>
+    <h2>HOST CONTROLS</h2>
+    <div class="host-sub">Everyone on the WiFi sees the theme you pick here.</div>
+
+    <div class="host-section">Theme</div>
+    <div id="theme-list"></div>
+
+    <div class="host-section">Machine</div>
+    <a class="host-link" href="/setup">Set Up Pumps <span class="arrow">&rsaquo;</span></a>
+    <a class="host-link" href="/network">Network <span class="arrow">&rsaquo;</span></a>
+    <a class="host-link" href="/test">Hardware Test <span class="arrow">&rsaquo;</span></a>
+  </div>
 </div>
 
 <div class="confetti-layer back" id="confetti-back"></div>
@@ -85,7 +226,7 @@
   let lastAssignSig = '';
   let allDrinks = [];
 
-  // ----- Fiesta theme -------------------------------------------------
+  // ----- Fiesta theme (Ivan's 28th) -----------------------------------
   // Edit this block to reuse the theme for the next birthday.
   const PARTY = {
     greeting: 'Feliz Cumpleaños',
@@ -100,21 +241,73 @@
     doneMessage: '¡Salud, Ivan! 🥂',  // replaces "Enjoy! 🍸"
   };
 
+  // ----- Ugnar's Bar theme (theme key `desert`) -----------------------
+  // Matches the pixel-desert party invite. Edit the copy here; the scene
+  // and the swivel table are built from these plus whatever's on the pumps.
+  const DESERT = {
+    eyebrow: '◆  THE BAR IS OPEN  ◆',
+    title: "UGNAR'S",
+    accent: 'BAR',
+    tagline: 'spin the table · pick your poison',
+    hint: 'tap the glass for the recipe',
+    pourLabel: 'POURING',
+    doneLabel: '¡SALUD!',
+    doneMessage: 'Drink up, foo 🍸',
+  };
+
+  // Past and present parties, in the order they show up in host controls.
+  const THEMES = {
+    desert: {
+      name: "UGNAR'S BAR",
+      note: 'This party — pixel desert, swivel table, floating drinks.',
+      live: true,
+    },
+    fiesta: {
+      name: "FIESTA — IVAN'S 28TH",
+      note: 'Past party — papel picado, confetti, El Paso sunset.',
+    },
+    default: {
+      name: 'CLASSIC',
+      note: 'No party dressing. Plain dark menu, every recipe in a grid.',
+    },
+  };
+
   const FIESTA_COLORS = ['#ff2e88', '#ffb020', '#17c3b2', '#ff6f5e', '#9b5de5', '#5ee6a8'];
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let fiesta = false;
+  let theme = 'default';
+  let fiesta = false;   // kept as its own flag — the fiesta copy checks it everywhere
+  let desert = false;
 
-  function toggleTheme() {
-    applyTheme(!fiesta);
-    try { localStorage.setItem('dm-theme', fiesta ? 'fiesta' : 'default'); } catch {}
+  let themeSetAt = 0;   // ignore polled themes right after a local change
+
+  function setTheme(name) {
+    if (!THEMES[name]) name = 'default';
+    themeSetAt = Date.now();
+    applyTheme(name);
+    rememberTheme(name);
+    renderThemeList();
     if (fiesta) burstConfetti(26, 2600);
+    // The machine owns the theme, so every phone already on the page picks
+    // this up on its next status poll.
+    fetch('/api/theme', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ theme: name }),
+    }).catch(() => {});
   }
 
-  function applyTheme(on) {
-    fiesta = on;
-    document.body.classList.toggle('fiesta', on);
-    document.getElementById('theme-toggle').textContent = on ? '🎉 Fiesta On' : '🎉 Fiesta Mode';
-    if (on) {
+  function rememberTheme(name) {
+    try { localStorage.setItem('dm-theme', name); } catch {}
+  }
+
+  function applyTheme(name) {
+    theme = THEMES[name] ? name : 'default';
+    fiesta = theme === 'fiesta';
+    desert = theme === 'desert';
+    document.body.classList.toggle('fiesta', fiesta);
+    document.body.classList.toggle('desert', desert);
+
+    if (fiesta) {
       document.getElementById('fh-eyebrow').textContent = PARTY.place;
       document.getElementById('fh-greeting').textContent = PARTY.greeting;
       document.getElementById('fh-name').textContent = PARTY.name;
@@ -123,11 +316,44 @@
       document.title = `${PARTY.greeting}, ${PARTY.name}!`;
       buildPapelPicado();
     } else {
-      document.title = 'Drink Machine';
       document.getElementById('papel').innerHTML = '';
     }
+
+    if (desert) {
+      document.getElementById('d-eyebrow').textContent = DESERT.eyebrow;
+      document.getElementById('d-title').innerHTML =
+        `${escapeHtml(DESERT.title)} <span class="accent">${escapeHtml(DESERT.accent)}</span>`;
+      document.getElementById('d-sub').textContent = DESERT.tagline;
+      document.getElementById('sc-hint').textContent = DESERT.hint;
+      document.title = `${DESERT.title} ${DESERT.accent}`;
+      buildStars();
+    } else if (!fiesta) {
+      document.title = 'Drink Machine';
+    }
+
+    // The desert scene is fixed and full-bleed; the other themes scroll.
+    document.body.style.overflow = desert ? 'hidden' : '';
     if (allDrinks.length) renderDrinks();   // avoid an empty-state flash on first load
   }
+
+  // ----- Host controls -------------------------------------------------
+  function renderThemeList() {
+    document.getElementById('theme-list').innerHTML = Object.entries(THEMES)
+      .map(([key, t]) => `
+        <button class="theme-option${key === theme ? ' active' : ''}" onclick="setTheme('${key}')">
+          ${t.live ? '<span class="to-live">TONIGHT</span>' : ''}
+          <div class="to-name">${escapeHtml(t.name)}</div>
+          <div class="to-note">${escapeHtml(t.note)}</div>
+        </button>`)
+      .join('');
+  }
+
+  function openHost() {
+    renderThemeList();
+    document.getElementById('host-panel').classList.add('open');
+  }
+  function closeHost() { document.getElementById('host-panel').classList.remove('open'); }
+  function onHostClick(e) { if (e.target.id === 'host-panel') closeHost(); }
 
   /* Cut-paper bunting: flags hung along a sagging string, each one
      punched with a mask so the holes show the sky through. */
@@ -201,6 +427,313 @@
       setTimeout(() => bit.remove(), (dur * 1000) + duration + 400);
     }
   }
+
+  // ===================== UGNAR'S BAR =====================
+
+  /* Stars are scattered once and left alone — re-cutting them on every
+     render would make the sky visibly jump. */
+  let starsBuilt = false;
+  function buildStars() {
+    if (starsBuilt) return;
+    starsBuilt = true;
+    let html = '';
+    for (let i = 0; i < 64; i++) {
+      const big = Math.random() > 0.8 ? ' big' : '';
+      html += `<div class="d-star${big}" style="left:${(Math.random() * 100).toFixed(2)}%;`
+            + `top:${(Math.random() * 56).toFixed(2)}%;`
+            + `animation-delay:${(Math.random() * 3).toFixed(2)}s"></div>`;
+    }
+    document.getElementById('d-stars').innerHTML = html;
+  }
+
+  /* ---------- The swivel table ----------
+     Cards sit stacked at the centre of #swivel and are pushed out onto an
+     ellipse: x = sin(angle), y = cos(angle) - 1, with scale/opacity/blur all
+     driven by cos(angle). The front glass lands dead centre at full size and
+     everything else recedes upward behind it. `swivelPos` is a *fractional*
+     index, so a drag moves the whole table continuously and then snaps to
+     the nearest seat. */
+  const SWIVEL_DRAG_PX = 90;      // finger travel that equals one seat
+
+  /* How the table recedes. Two separate effects, because one curve couldn't do
+     both jobs: `depth` is the general falling-away into the distance, and
+     `bump` is a bell one seat wide that lifts *only* whatever is at the front.
+     Without the bell, getting the front glass to twice its neighbour's size
+     needs an exponent so steep that the back seats all collapse onto the floor
+     value — and the growth all happens in the last few pixels of a drag, which
+     looks like a glitch rather than a glass arriving.
+
+     With it: at the front seat exactly, FRONT. One seat out and beyond, SIDE
+     or less. Mid-drag the two glasses either side of centre trade the bump
+     smoothly, so the table still moves continuously under a finger. */
+  const SWIVEL_FALLOFF     = 1.6;
+  const SWIVEL_SCALE_BACK  = 0.32;   // the furthest visible seat
+  const SWIVEL_SCALE_SIDE  = 0.53;   // one seat out — half the front glass
+  const SWIVEL_SCALE_FRONT = 1.06;   // dead centre
+
+  let swivelDrinks = [];
+  let swivelCards = [];
+  let swivelPos = 0;
+  let swivelSig = '';
+  let swivelAnim = null;
+  let swivelFrontIdx = -1;
+
+  function wrapIndex(i, n) { return ((i % n) + n) % n; }
+
+  function renderSwivel(drinks) {
+    const host = document.getElementById('swivel');
+    const sig = drinks.map(d => d.id).join(',');
+    if (sig !== swivelSig) {
+      swivelSig = sig;
+      swivelDrinks = drinks;
+      swivelFrontIdx = -1;
+      host.querySelectorAll('.swivel-card, .swivel-empty').forEach(el => el.remove());
+
+      if (!drinks.length) {
+        const empty = document.createElement('div');
+        empty.className = 'swivel-empty';
+        empty.innerHTML = availableSet().size
+          ? `<div class="se-head">NOTHING POURABLE</div>
+             <div class="se-sub">The bottles on the pumps don't add up to a drink yet. Swap a couple in Host Controls &rarr; Set Up Pumps.</div>`
+          : `<div class="se-head">LOAD THE BOTTLES</div>
+             <div class="se-sub">Tell the machine what's on each pump and the table fills up with everything it can pour.</div>`;
+        host.appendChild(empty);
+      } else {
+        const frag = document.createDocumentFragment();
+        drinks.forEach((d, i) => {
+          const el = document.createElement('div');
+          // The glass class lets CSS sit the light-pool at *this* glass's
+          // base — a shot ends far higher in the box than a highball.
+          el.className = `swivel-card glass-${d.glass}`;
+          el.dataset.i = i;
+          // Also read by ::after, which pools this drink's own neon on the
+          // table under it. Same value pixelGlassSVG puts on the <svg>.
+          el.style.setProperty('--neon', lighten(d.color, 0.55));
+          // The wobble lives on an inner element: the card itself is
+          // rewritten by layoutSwivel() on every drag frame, so a CSS
+          // animation on the same node would be stomped mid-swipe.
+          // Staggered from the index so the table doesn't breathe in unison.
+          el.innerHTML = `<div class="swivel-float" style="--wob:${(5.4 + (i % 5) * 0.7).toFixed(1)}s;`
+                       + `--wob-delay:-${((i * 1.7) % 6).toFixed(1)}s">`
+                       + `<div class="drink-art">${glassSVG(d.glass, d.color, d.garnish)}</div></div>`;
+          frag.appendChild(el);
+        });
+        host.appendChild(frag);
+      }
+      swivelCards = Array.from(host.querySelectorAll('.swivel-card'));
+      if (swivelPos >= swivelCards.length) swivelPos = 0;
+    }
+    const hasCards = swivelCards.length > 1;
+    document.getElementById('swivel-prev').style.display = hasCards ? '' : 'none';
+    document.getElementById('swivel-next').style.display = hasCards ? '' : 'none';
+    document.getElementById('swivel-caption').style.visibility =
+      swivelCards.length ? 'visible' : 'hidden';
+    layoutSwivel();
+    renderDots();
+  }
+
+  function layoutSwivel() {
+    const n = swivelCards.length;
+    if (!n) return;
+    const box = document.getElementById('swivel');
+    // Few drinks spread around the whole circle; a long menu keeps a fixed
+    // angle per seat so the front few stay readable instead of bunching.
+    const step = n > 9 ? 0.66 : (2 * Math.PI) / n;
+    const rx = Math.min(box.clientWidth * 0.36, 260);
+    const ry = Math.min(box.clientHeight * 0.13, 54);
+
+    for (let i = 0; i < n; i++) {
+      let d = wrapIndex(i - swivelPos, n);
+      if (d > n / 2) d -= n;
+      const th = d * step;
+      const el = swivelCards[i];
+      if (Math.abs(d) > 3.5 || Math.abs(th) > 2.5) { el.style.display = 'none'; continue; }
+      el.style.display = '';
+      const c = Math.cos(th), t = (c + 1) / 2;
+      const depth = Math.pow(t, SWIVEL_FALLOFF);
+      // How far this card is into the front seat: 1 dead centre, 0 by the time
+      // it's a full seat away. Smoothstepped so it eases in and out of centre.
+      const near = Math.max(0, 1 - Math.abs(d));
+      const bump = near * near * (3 - 2 * near);
+      const side = SWIVEL_SCALE_BACK + (SWIVEL_SCALE_SIDE - SWIVEL_SCALE_BACK) * depth;
+      const scale = side + (SWIVEL_SCALE_FRONT - side) * bump;
+      // `cos - 1` rather than `cos` keeps the front seat dead centre in the
+      // box and lets the rest of the table recede upward from there.
+      el.style.transform = `translate3d(${(Math.sin(th) * rx).toFixed(1)}px, `
+                         + `${((c - 1) * ry).toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+      el.style.opacity = (0.12 + 0.88 * depth).toFixed(3);
+      el.style.zIndex = Math.round(t * 1000);
+      el.style.filter = t > 0.93 ? 'none' : `blur(${((1 - depth) * 3.2).toFixed(2)}px)`;
+      el.style.setProperty('--glow', t > 0.93 ? '1' : '0');
+    }
+
+    // Update the caption only when the front seat actually changes, so a
+    // drag doesn't rewrite the DOM on every frame.
+    const front = wrapIndex(Math.round(swivelPos), n);
+    if (front !== swivelFrontIdx) {
+      const first = swivelFrontIdx === -1;   // the initial paint isn't a spin
+      swivelFrontIdx = front;
+      updateSwivelCaption();
+      markDots();
+      if (!first) detent();
+    }
+  }
+
+  /* ---------- Detent ----------
+     One click per seat the table passes, so spinning it feels like a physical
+     dial rather than a picture sliding around.
+
+     `navigator.vibrate` is the real thing, but it does not exist on iOS/iPadOS
+     Safari at all — and the party kiosk is an iPad. So the buzz is the bonus
+     and the visual snap is the guaranteed half: the caption (name, meter and
+     dots together) twitches once per seat, which still reads as a click from
+     arm's length on a device nobody is holding. */
+  function haptic(pattern) {
+    if (reduceMotion) return;
+    try { navigator.vibrate && navigator.vibrate(pattern); } catch {}
+  }
+
+  function detent() {
+    haptic(10);
+    const cap = document.getElementById('swivel-caption');
+    if (reduceMotion) return;
+    // Retrigger the animation: dropping and re-adding the class in the same
+    // frame is a no-op, so force a reflow between the two.
+    cap.classList.remove('detent');
+    void cap.offsetWidth;
+    cap.classList.add('detent');
+  }
+
+  function updateSwivelCaption() {
+    const d = swivelDrinks[swivelFrontIdx];
+    document.getElementById('sc-cat').textContent = d ? d.category : '';
+    document.getElementById('sc-name').textContent = d ? d.name : '';
+    document.getElementById('sc-potency').innerHTML = d ? potencyMeter(d.potency) : '';
+  }
+
+  /* ---------- Potency meter ----------
+     Five bars under the drink's name, so nobody has to do arithmetic on a
+     recipe to find out what they're about to drink. The level is worked out
+     server-side (recipes.potency) from both how much alcohol is in the glass
+     and how concentrated it is — a straight shot and a vodka cranberry hold
+     the same ounce of vodka, and only one of them is a sipping drink.
+     Colour carries the same message as the word, for anyone reading it across
+     the room. */
+  function potencyMeter(p, opts) {
+    if (!p) return '';
+    const { detail = false, light = false } = opts || {};
+    const bars = Array.from({ length: 5 },
+      (_, i) => `<i${i < p.level ? ' class="on"' : ''}></i>`).join('');
+    let text = p.label;
+    if (p.level === 0) {
+      text += detail ? ' · no alcohol' : '';
+    } else {
+      text += ` · ${p.abv}% ABV`;
+      if (detail) {
+        text += ` · ${p.standard_drinks} standard drink${p.standard_drinks === 1 ? '' : 's'}`;
+      }
+    }
+    return `<div class="potency lvl-${p.level}">
+        <div class="pot-bars" role="img"
+             aria-label="Strength ${p.level} of 5, ${p.label}">${bars}</div>
+        <div class="pot-label">${escapeHtml(text)}${light ? '<span class="pot-tag">LIGHT</span>' : ''}</div>
+      </div>`;
+  }
+
+  function renderDots() {
+    const host = document.getElementById('swivel-dots');
+    // A dot per drink is noise past a couple of dozen; the name carries it.
+    if (swivelDrinks.length < 2 || swivelDrinks.length > 30) { host.innerHTML = ''; return; }
+    host.innerHTML = swivelDrinks.map(() => '<span class="swivel-dot"></span>').join('');
+    markDots();
+  }
+
+  function markDots() {
+    const dots = document.getElementById('swivel-dots').children;
+    for (let i = 0; i < dots.length; i++) dots[i].classList.toggle('on', i === swivelFrontIdx);
+  }
+
+  function snapSwivel(target, ms) {
+    cancelAnimationFrame(swivelAnim);
+    const n = swivelCards.length;
+    if (!n) return;
+    const from = swivelPos, delta = target - from, start = performance.now();
+    const dur = reduceMotion ? 0 : (ms || 320);
+    const tick = (now) => {
+      const p = dur ? Math.min(1, (now - start) / dur) : 1;
+      swivelPos = from + delta * (1 - Math.pow(1 - p, 3));
+      layoutSwivel();
+      if (p < 1) swivelAnim = requestAnimationFrame(tick);
+      else { swivelPos = wrapIndex(target, n); layoutSwivel(); }
+    };
+    swivelAnim = requestAnimationFrame(tick);
+  }
+
+  /* Shortest path to seat `i` — going the long way round a 23-drink table
+     looks broken. */
+  function swivelTargetFor(i) {
+    const n = swivelCards.length;
+    let d = wrapIndex(i - swivelPos, n);
+    if (d > n / 2) d -= n;
+    return swivelPos + d;
+  }
+
+  function spinSwivel(dir) {
+    if (swivelCards.length < 2) return;
+    snapSwivel(Math.round(swivelPos) + dir);
+  }
+
+  (function initSwivel() {
+    const box = document.getElementById('swivel');
+    let dragging = false, startX = 0, startPos = 0, moved = 0, downCard = null, pid = null;
+
+    box.addEventListener('pointerdown', (e) => {
+      if (!swivelCards.length || e.target.closest('.swivel-arrow')) return;
+      dragging = true; moved = 0;
+      startX = e.clientX; startPos = swivelPos;
+      // Pointer capture retargets later events to the box, so remember
+      // which card was actually pressed while we still can.
+      downCard = e.target.closest('.swivel-card');
+      pid = e.pointerId;
+      try { box.setPointerCapture(pid); } catch {}
+      cancelAnimationFrame(swivelAnim);
+      box.classList.add('dragging');
+    });
+
+    box.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      swivelPos = startPos - dx / SWIVEL_DRAG_PX;
+      layoutSwivel();
+    });
+
+    const release = () => {
+      if (!dragging) return;
+      dragging = false;
+      box.classList.remove('dragging');
+      if (pid !== null) { try { box.releasePointerCapture(pid); } catch {} pid = null; }
+
+      // Under ~8px of travel is a tap, not a spin.
+      if (moved < 8 && downCard) {
+        const i = +downCard.dataset.i;
+        if (i === swivelFrontIdx) {
+          const d = swivelDrinks[i];
+          snapSwivel(Math.round(swivelPos), 1);
+          if (d) openDrink(d.id);
+          return;
+        }
+        snapSwivel(swivelTargetFor(i));
+        return;
+      }
+      snapSwivel(Math.round(swivelPos));
+    };
+    box.addEventListener('pointerup', release);
+    box.addEventListener('pointercancel', release);
+
+    document.getElementById('swivel-prev').addEventListener('click', () => spinSwivel(-1));
+    document.getElementById('swivel-next').addEventListener('click', () => spinSwivel(1));
+  })();
   // --------------------------------------------------------------------
 
   function escapeHtml(s) {
@@ -212,6 +745,12 @@
   async function pollStatus() {
     try {
       const data = await fetch('/api/status').then(r => r.json());
+      // The host's pick, arriving on someone else's phone.
+      if (data.theme && data.theme !== theme && Date.now() - themeSetAt > 4000) {
+        applyTheme(data.theme);
+        rememberTheme(data.theme);
+        renderThemeList();
+      }
       for (const [id, info] of Object.entries(data.pumps)) {
         ingredients[parseInt(id)] = info.ingredient || '';
       }
@@ -229,6 +768,7 @@
     try {
       const data = await fetch('/api/drinks').then(r => r.json());
       allDrinks = data.drinks;
+      if (data.light_strength) LIGHT_POUR = data.light_strength;
       renderDrinks();
     } catch {}
   }
@@ -291,18 +831,31 @@
     }
   }
 
+  /* Ingredients the pumps dispense. Anything flagged `manual` — the splash
+     of Sprite, the float of cola — gets topped up by hand at the glass, so
+     it must never count against whether a drink can be made. */
+  function pumped(d) { return d.ingredients.filter(i => !i.manual); }
+  function handAdded(d) { return d.ingredients.filter(i => i.manual); }
+
   function renderDrinks() {
     const q = document.getElementById('search').value.trim().toLowerCase();
     const list = document.getElementById('drink-list');
     const avail = availableSet();
 
     let drinks = allDrinks.map(d => {
-      const missing = d.ingredients
+      const missing = pumped(d)
         .filter(i => !avail.has(i.name.trim().toLowerCase()))
         .map(i => i.name);
       return { ...d, available: missing.length === 0, missing };
     });
     const canMake = drinks.filter(d => d.available).length;
+
+    // The desert theme has no grid and no search box — the swivel table is
+    // the whole menu, and it only ever holds what's pourable right now.
+    if (desert) {
+      renderSwivel(avail.size ? drinks.filter(d => d.available) : []);
+      return;
+    }
 
     renderIntro(avail, canMake);
     document.getElementById('browse-link').textContent = menuMode === 'all'
@@ -340,7 +893,9 @@
   }
 
   function drinkCard(d, isFeatured, avail) {
-    const ings = d.ingredients.map(i => `${escapeHtml(i.name)} (${i.ml}ml)`).join(' · ');
+    const ings = d.ingredients
+      .map(i => `${escapeHtml(i.name)} (${i.ml}ml${i.manual ? ', by hand' : ''})`)
+      .join(' · ');
     const garnish = d.garnish ? `<div class="drink-garnish">${escapeHtml(d.garnish)}</div>` : '';
     const missing = (!d.available && d.missing.length)
       ? `<div class="drink-missing">Missing: ${d.missing.map(escapeHtml).join(', ')}</div>`
@@ -351,9 +906,10 @@
     return `
       <div class="drink-card${stateClass}${isFeatured ? ' featured' : ''}" onclick="openDrink('${d.id}')">
         ${ribbon}
-        <div class="drink-art">${glassSVG(d.glass, d.color)}</div>
+        <div class="drink-art">${glassSVG(d.glass, d.color, d.garnish)}</div>
         <div class="drink-category">${escapeHtml(d.category)}</div>
         <div class="drink-name">${escapeHtml(d.name)}</div>
+        ${potencyMeter(d.potency)}
         <div class="drink-ingredients">${ings}</div>
         ${missing}
         ${garnish}
@@ -374,86 +930,395 @@
     return topW + (botW - topW) * t;
   }
 
+  /* ---------- Glass art ----------
+     Every glass is drawn into the same 200x260 box, so the *proportions*
+     have to carry the meaning: a shot is a short, squat, thick-based glass
+     sitting low in the frame, a highball is nearly full height with a straw,
+     a rocks glass is wide and half-full of ice, and stemware stands on a
+     foot. Garnishes are read off the recipe's own garnish line, so a salted
+     rim or a lime wheel shows up wherever the recipe actually calls for one. */
+
+  function garnishArt(garnish) {
+    const s = (garnish || '').toLowerCase();
+    return {
+      salt:   /salt|sugar|tajin/.test(s),
+      lime:   s.includes('lime'),
+      lemon:  s.includes('lemon'),
+      orange: s.includes('orange'),
+      cherry: s.includes('cherry'),
+    };
+  }
+
+  // A citrus wheel perched on the rim — the single clearest "this is a
+  // cocktail, not a shot" signal at small sizes.
+  function citrusWheel(cx, cy, r, rind, flesh) {
+    const spokes = [0, 45, 90, 135].map(a => {
+      const rad = a * Math.PI / 180, dx = Math.cos(rad) * r * 0.52, dy = Math.sin(rad) * r * 0.52;
+      return `<line x1="${(cx - dx).toFixed(1)}" y1="${(cy - dy).toFixed(1)}"
+                    x2="${(cx + dx).toFixed(1)}" y2="${(cy + dy).toFixed(1)}"/>`;
+    }).join('');
+    return `<g>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="${flesh}" stroke="${rind}" stroke-width="${(r * 0.3).toFixed(1)}"/>
+      <g stroke="${rind}" stroke-width="1.4" opacity="0.5" stroke-linecap="round">${spokes}</g>
+    </g>`;
+  }
+
+  function cherryArt(cx, cy, r) {
+    return `<g>
+      <path d="M ${cx},${cy - r} C ${(cx + r * 0.5).toFixed(1)},${(cy - r * 2.4).toFixed(1)}
+               ${(cx + r * 1.7).toFixed(1)},${(cy - r * 2.6).toFixed(1)} ${(cx + r * 2).toFixed(1)},${(cy - r * 3.1).toFixed(1)}"
+            fill="none" stroke="#8a5a3c" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="#c0304a"/>
+      <circle cx="${(cx - r * 0.32).toFixed(1)}" cy="${(cy - r * 0.32).toFixed(1)}" r="${(r * 0.26).toFixed(1)}"
+              fill="#f08098" opacity="0.85"/>
+    </g>`;
+  }
+
+  function iceCube(x, y, s, rot) {
+    return `<rect x="${x}" y="${y}" width="${s}" height="${s}" rx="${(s * 0.18).toFixed(1)}"
+                  transform="rotate(${rot} ${(x + s / 2).toFixed(1)} ${(y + s / 2).toFixed(1)})"
+                  fill="#ffffff" fill-opacity="0.20"
+                  stroke="#ffffff" stroke-opacity="0.38" stroke-width="1.6"/>`;
+  }
+
+  function saltedRim(cx, y, halfW) {
+    let out = '';
+    for (let i = 0; i <= 26; i++) {
+      const t = (i / 26) * 2 - 1;
+      const x = cx + t * halfW;
+      // Ride the rim ellipse, alternating just inside and just outside it.
+      const dip = 7 * Math.sqrt(Math.max(0, 1 - t * t)) * (i % 2 ? 0.55 : -0.35);
+      out += `<circle cx="${x.toFixed(1)}" cy="${(y + dip).toFixed(1)}"
+                      r="${(1.5 + (i % 3) * 0.6).toFixed(1)}" fill="#ffffff" opacity="0.8"/>`;
+    }
+    return out;
+  }
+
+  function strawArt(x1, y1, x2, y2) {
+    return `<g stroke-linecap="round">
+      <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ff5d73" stroke-width="8"/>
+      <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff5f6" stroke-width="8"
+            stroke-dasharray="9 12" opacity="0.9"/>
+    </g>`;
+  }
+
+  /* The desert theme draws its own glasses — same 200x260 box, but built out
+     of 10-unit blocks so they sit on the pixel grid with the cacti and the
+     dunes instead of floating over them as smooth vector art. Fiesta and the
+     classic menu keep the original glasses; they're past parties and the
+     pixel look would be out of place. */
+  function glassSVG(glass, color, garnish) {
+    return desert ? pixelGlassSVG(glass, color, garnish)
+                  : vectorGlassSVG(glass, color, garnish);
+  }
+
   let svgUid = 0;
-  function glassSVG(glass, color) {
+  function vectorGlassSVG(glass, color, garnish) {
     const light = lighten(color, 0.35);
     const stroke = '#e8e8e8';
-    const gid = `liq${svgUid++}`;
-    const defs = `<defs>
-      <radialGradient id="${gid}" cx="50%" cy="30%" r="80%">
-        <stop offset="0%" stop-color="${light}"/>
-        <stop offset="100%" stop-color="${color}"/>
-      </radialGradient>
-    </defs>`;
+    const uid = svgUid++;
+    const gid = `liq${uid}`, cid = `clip${uid}`;
+    const g = garnishArt(garnish);
     const c = 100;
-    let inner = '';
+    let clipShape = '', inner = '', rim = '';
 
-    if (glass === 'highball' || glass === 'rocks') {
+    if (glass === 'highball' || glass === 'rocks' || glass === 'shot') {
       const geo = glass === 'highball'
-        ? { topW: 64, botW: 58, top: 22, bot: 232, fill: 0.8 }
-        : { topW: 96, botW: 82, top: 96, bot: 224, fill: 0.6 };
+        ? { topW: 64, botW: 58, top: 22,  bot: 232, fill: 0.80 }
+        : glass === 'shot'
+          // Half the height of the others and thick-bottomed: the silhouette
+          // is what tells someone this is a shot before they read anything.
+          ? { topW: 66, botW: 54, top: 132, bot: 218, fill: 0.86 }
+          : { topW: 98, botW: 84, top: 96,  bot: 224, fill: 0.62 };
       const tH = geo.topW / 2, bH = geo.botW / 2;
       const yf = geo.bot - (geo.bot - geo.top) * geo.fill;
       const wfH = widthAt(yf, geo.top, geo.bot, geo.topW, geo.botW) / 2;
       const glassPts = `${c - tH},${geo.top} ${c + tH},${geo.top} ${c + bH},${geo.bot} ${c - bH},${geo.bot}`;
       const liqPts = `${c - wfH},${yf} ${c + wfH},${yf} ${c + bH},${geo.bot} ${c - bH},${geo.bot}`;
+      clipShape = `<polygon points="${glassPts}"/>`;
+
+      let ice = '';
+      if (glass === 'highball') {
+        ice = iceCube(c - 22, yf + 8, 24, -12) + iceCube(c + 1, yf + 34, 22, 16) + iceCube(c - 16, yf + 60, 20, 5);
+      } else if (glass === 'rocks') {
+        ice = iceCube(c - 28, yf + 4, 28, -10) + iceCube(c + 3, yf + 24, 26, 14);
+      }
+
+      // A shot glass is mostly base — a heavy slug of glass under the liquid.
+      const heavyBase = glass === 'shot'
+        ? `<path d="M ${c - bH - 1},${geo.bot - 15} L ${c + bH + 1},${geo.bot - 15} L ${c + bH + 1},${geo.bot} L ${c - bH - 1},${geo.bot} Z"
+                 fill="#ffffff" fill-opacity="0.14" stroke="${stroke}" stroke-width="3"
+                 stroke-linejoin="round" opacity="0.85"/>`
+        : '';
+
+      const straw = glass === 'highball' ? strawArt(c + 22, 6, c - 8, yf + 44) : '';
+
       inner = `
-        <polygon points="${liqPts}" fill="url(#${gid})"/>
-        <ellipse cx="${c}" cy="${yf}" rx="${wfH}" ry="6" fill="${light}" opacity="0.9"/>
+        <g clip-path="url(#${cid})">
+          <polygon points="${liqPts}" fill="url(#${gid})"/>
+          <ellipse cx="${c}" cy="${yf}" rx="${wfH.toFixed(1)}" ry="6" fill="${light}" opacity="0.9"/>
+          ${ice}
+        </g>
+        ${straw}
         <polygon points="${glassPts}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linejoin="round" opacity="0.8"/>
+        ${heavyBase}
         <ellipse cx="${c}" cy="${geo.top}" rx="${tH}" ry="7" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
-        <line x1="${c - tH + 8}" y1="${geo.top + 16}" x2="${c - bH + 6}" y2="${geo.bot - 16}" stroke="#fff" stroke-width="4" opacity="0.1" stroke-linecap="round"/>`;
+        <line x1="${c - tH + 8}" y1="${geo.top + 16}" x2="${c - bH + 6}" y2="${geo.bot - 16}"
+              stroke="#fff" stroke-width="4" opacity="0.1" stroke-linecap="round"/>
+        ${g.salt ? saltedRim(c, geo.top, tH) : ''}`;
+      rim = rimGarnish(g, c, geo.top, tH, glass === 'shot' ? 13 : 17);
+
     } else {
       const rimY = 40, footY = 244;
       const apexY = glass === 'margarita' ? 112 : 122;
       const half = glass === 'margarita' ? 78 : 62;
-      let bowlPath, liqPts, surfaceY, surfaceHalf;
+      let bowlPath, liqPts, surfaceY, surfaceHalf, bowlFill;
 
       if (glass === 'margarita') {
         const nb = 14;
         bowlPath = `M ${c - half},${rimY} Q ${c - half + 6},${rimY + 28} ${c - nb},${apexY} L ${c + nb},${apexY} Q ${c + half - 6},${rimY + 28} ${c + half},${rimY}`;
+        bowlFill = bowlPath + ` Z`;
         const fill = 0.78;
         surfaceY = rimY + (apexY - rimY) * (1 - fill);
         surfaceHalf = widthAt(surfaceY, rimY, apexY, half, nb);
         liqPts = `${c - surfaceHalf},${surfaceY} ${c + surfaceHalf},${surfaceY} ${c + nb},${apexY} ${c - nb},${apexY}`;
       } else {
         bowlPath = `M ${c - half},${rimY} L ${c},${apexY} L ${c + half},${rimY}`;
+        bowlFill = bowlPath + ` Z`;
         const fill = 0.7;
         surfaceY = apexY - (apexY - rimY) * fill;
         surfaceHalf = half * fill;
         liqPts = `${c - surfaceHalf},${surfaceY} ${c + surfaceHalf},${surfaceY} ${c},${apexY}`;
       }
+      clipShape = `<path d="${bowlFill}"/>`;
 
       inner = `
-        <polygon points="${liqPts}" fill="url(#${gid})"/>
-        <ellipse cx="${c}" cy="${surfaceY}" rx="${surfaceHalf}" ry="6" fill="${light}" opacity="0.9"/>
+        <g clip-path="url(#${cid})">
+          <polygon points="${liqPts}" fill="url(#${gid})"/>
+          <ellipse cx="${c}" cy="${surfaceY.toFixed(1)}" rx="${surfaceHalf.toFixed(1)}" ry="6" fill="${light}" opacity="0.9"/>
+        </g>
         <path d="${bowlPath}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linejoin="round" opacity="0.8"/>
         <ellipse cx="${c}" cy="${rimY}" rx="${half}" ry="8" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
-        <line x1="${c}" y1="${apexY}" x2="${c}" y2="${footY - 8}" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
-        <ellipse cx="${c}" cy="${footY}" rx="38" ry="7" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>`;
+        <line x1="${c}" y1="${apexY}" x2="${c}" y2="${footY - 8}" stroke="${stroke}" stroke-width="4" opacity="0.8" stroke-linecap="round"/>
+        <ellipse cx="${c}" cy="${footY}" rx="38" ry="7" fill="none" stroke="${stroke}" stroke-width="3" opacity="0.8"/>
+        ${g.salt ? saltedRim(c, rimY, half) : ''}`;
+      rim = rimGarnish(g, c, rimY, half, 18);
     }
 
-    return `<svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">${defs}${inner}</svg>`;
+    const defs = `<defs>
+      <radialGradient id="${gid}" cx="50%" cy="30%" r="80%">
+        <stop offset="0%" stop-color="${light}"/>
+        <stop offset="100%" stop-color="${color}"/>
+      </radialGradient>
+      <clipPath id="${cid}">${clipShape}</clipPath>
+    </defs>`;
+
+    return `<svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">${defs}${inner}${rim}</svg>`;
+  }
+
+  /* Citrus hangs off the right of the rim, a cherry off the left, so a drink
+     calling for both doesn't stack them on top of each other. */
+  function rimGarnish(g, c, rimY, halfW, r) {
+    let out = '';
+    if (g.lime)        out += citrusWheel(c + halfW - 2, rimY - 2, r, '#4a8c2a', '#c8e88a');
+    else if (g.lemon)  out += citrusWheel(c + halfW - 2, rimY - 2, r, '#d0a020', '#f6ec9a');
+    else if (g.orange) out += citrusWheel(c + halfW - 2, rimY - 2, r, '#d2701c', '#f8c471');
+    if (g.cherry)      out += cherryArt(c - halfW + 4, rimY + 4, r * 0.52);
+    return out;
+  }
+
+  /* ---------- Pixel glass art (desert theme) ----------
+     The same 200x260 box as the vector glasses, but built out of 10-unit
+     blocks so the drinks sit on the same grid as the cacti and the dunes
+     instead of floating over them as smooth curves. Proportion still has to
+     carry the meaning — a shot is short and squat on a slab of base, a
+     highball is nearly full height, a rocks glass is wide and full of ice,
+     stemware stands on a foot — so each glass is just a stack of row widths.
+
+     No straws. A straw is a thin diagonal, the one shape a pixel grid can't
+     draw without looking like a rendering bug; the ice and the lit surface do
+     the "this is a tall cold drink" job instead.
+
+     The neon comes from a CSS drop-shadow on the whole <svg> (see desert.css)
+     rather than an SVG filter: the swivel table animates up to seven of these
+     at once on the party iPad, and the compositor handles drop-shadow far
+     better than it handles feGaussianBlur. */
+  /* 4 is the finest cell that still divides the 200x260 art box evenly (the
+     divisors are 1, 2, 4, 5, 10, 20 — and 2 is fine enough that the glasses
+     stop reading as pixel art at all). */
+  const PX_U    = 4;    // one art pixel
+  const PX_N    = 50;   // cells across  — PX_N * PX_U is the 200 of the viewBox
+  const PX_ROWS = 65;   // cells down    — PX_ROWS * PX_U is the 260
+  const PX_CX   = 25;   // glasses centre on the seam between cells 24 and 25
+  const PX_WALL = 2;    // glass wall thickness, in cells
+  const PX_RIM  = 2;    // rows the rim and the liquid surface each occupy
+
+  /* `prof` is run-length encoded as [row count, half-width in cells]. Every
+     glass ends on row 61 so they all stand on the same table line — which is
+     what lets one light-pool position under the front card work for all five.
+     `bowl` marks how many of the leading rows hold liquid; everything after it
+     is stem and foot.
+
+     Widths and heights here are in *cells*; PX_U scales them into the same
+     200x260 box the vector art uses, so a half-width of 9 is 72px however fine
+     the grid happens to be. */
+  const PIXEL_GLASS = {
+    highball:  { top: 5,  fill: 0.78, base: 3, ice: 3, iceGap: 10,
+                 prof: [[43, 9], [14, 8]] },
+    rocks:     { top: 22, fill: 0.58, base: 3, ice: 2, iceGap: 9,
+                 prof: [[32, 15], [8, 14]] },
+    shot:      { top: 37, fill: 0.82, base: 5,
+                 prof: [[15, 9], [10, 8]] },
+    // A wide shallow saucer that falls away fast, on a long stem and a wide
+    // foot. The flare — widest a row or two *below* the rim — is what makes it
+    // read as a margarita glass rather than a funnel.
+    margarita: { top: 13, fill: 0.80, base: 3, bowl: 16,
+                 prof: [[1, 16], [2, 17], [1, 16], [1, 15], [1, 13], [1, 11], [1, 10],
+                        [1, 8], [1, 7], [1, 6], [1, 5], [2, 4], [2, 3],
+                        [26, 3], [1, 6], [1, 8], [5, 10]] },
+    // Rounder and deeper than the margarita, same stem and foot.
+    coupe:     { top: 12, fill: 0.74, base: 3, bowl: 17,
+                 prof: [[1, 12], [1, 14], [5, 15], [1, 14], [1, 13], [1, 12], [1, 11],
+                        [1, 9], [1, 7], [1, 5], [1, 4], [2, 3],
+                        [26, 3], [1, 6], [1, 8], [5, 10]] },
+  };
+
+  function pxBlock(col, row, cols, rows, fill, opacity) {
+    if (cols <= 0 || rows <= 0) return '';
+    return `<rect x="${col * PX_U}" y="${row * PX_U}"`
+         + ` width="${cols * PX_U}" height="${rows * PX_U}"`
+         + ` fill="${fill}"${opacity != null ? ` opacity="${opacity}"` : ''}/>`;
+  }
+
+  function px(col, row, fill, opacity)          { return pxBlock(col, row, 1, 1, fill, opacity); }
+  function pxRun(col, row, cells, fill, opacity) { return pxBlock(col, row, cells, 1, fill, opacity); }
+
+  /* A citrus wheel, 10 cells across, hung off the rim on the right. Stepped
+     off a circle rather than hand-drawn, so the rind stays an even thickness
+     all the way round — at this resolution a lumpy one is very visible. */
+  function pixelWheel(col, row, rind, flesh) {
+    const R = 6;
+    let out = '';
+    for (let y = 0; y < R * 2; y++) {
+      const dy = y - R + 0.5;
+      const w = Math.floor(Math.sqrt(Math.max(0, R * R - dy * dy)));
+      if (!w) continue;
+      out += pxRun(col + R - w, row + y, w * 2, rind);
+      const f = Math.floor(Math.sqrt(Math.max(0, (R - 1.7) * (R - 1.7) - dy * dy)));
+      if (f) out += pxRun(col + R - f, row + y, f * 2, flesh);
+    }
+    // A cross of pith, so it reads as a citrus wheel and not a coin.
+    for (let y = R - 4; y < R + 4; y++) out += pxRun(col + R - 1, row + y, 2, rind, 0.5);
+    out += pxRun(col + R - 4, row + R - 1, 8, rind, 0.5)
+         + pxRun(col + R - 4, row + R,     8, rind, 0.5);
+    return out;
+  }
+
+  function pixelGlassSVG(glass, color, garnish) {
+    const spec = PIXEL_GLASS[glass] || PIXEL_GLASS.highball;
+    const half = [];
+    spec.prof.forEach(([n, h]) => { for (let i = 0; i < n; i++) half.push(h); });
+
+    const top = spec.top, rows = half.length;
+    // The vessel is the part that holds liquid: the whole tumbler, or just the
+    // bowl of a stemmed glass. From `baseTop` down it's solid — base, stem, foot.
+    const vessel = spec.bowl || rows;
+    const vBot = top + vessel - 1;
+    const baseTop = vBot - (spec.base || 2) + 1;
+    const liqTop = top + Math.round((vessel - 1) * (1 - spec.fill));
+
+    const tube = lighten(color, 0.55);   // the neon tube the glass is bent from
+    const hot  = lighten(color, 0.88);   // its white-hot core — rim, ice, glare
+    const surf = lighten(color, 0.42);   // the lit surface of the liquid
+    const g = garnishArt(garnish);
+
+    let out = '';
+    for (let i = 0; i < rows; i++) {
+      const r = top + i, h = half[i];
+      const l = PX_CX - h, span = 2 * h;
+
+      // Stem, base and foot are solid — and so is any row too narrow to have
+      // an inside once both walls are drawn.
+      if (r >= baseTop || span <= PX_WALL * 2) { out += pxRun(l, r, span, tube); continue; }
+      // The rim drawn edge-on: without it the silhouette reads as a bucket
+      // rather than something you'd drink out of.
+      if (r < top + PX_RIM) { out += pxRun(l, r, span, hot); continue; }
+
+      // A brighter left wall for the first few rows is the specular you'd get
+      // off real glass, and it stops the two walls reading as a flat bracket.
+      out += pxRun(l, r, PX_WALL, r < top + PX_RIM + 10 ? hot : tube)
+           + pxRun(l + span - PX_WALL, r, PX_WALL, tube);
+      const w = span - PX_WALL * 2;
+      out += r < liqTop
+        ? pxRun(l + PX_WALL, r, w, hot, 0.07)                                  // empty glass
+        : pxRun(l + PX_WALL, r, w, r < liqTop + PX_RIM ? surf : color);        // the drink
+    }
+
+    const iceSz = 5;
+    for (let k = 0; k < (spec.ice || 0); k++) {
+      const r = liqTop + PX_RIM + k * (spec.iceGap || 9);
+      if (r + iceSz > baseTop) break;
+      const h = half[r - top];
+      const col = k % 2 ? PX_CX + h - PX_WALL - iceSz : PX_CX - h + PX_WALL;
+      out += pxBlock(col, r, iceSz, iceSz, hot, 0.26)
+           + pxBlock(col, r, 2, 2, hot, 0.5)                      // lit corner
+           + pxBlock(col + iceSz - 1, r + 1, 1, iceSz - 1, hot, 0.42);   // wet edge
+    }
+
+    const rimHalf = half[0], rimL = PX_CX - rimHalf, rimR = PX_CX + rimHalf - 1;
+    if (g.salt) {
+      for (let c = rimL; c <= rimR - 2; c += 5) {
+        out += pxRun(c, top - 2, 3, '#ffffff', 0.85)
+             + pxRun(c + 2, top - 1, 3, '#ffffff', 0.7);
+      }
+    }
+    if (g.lime)        out += pixelWheel(rimR - 4, top - 5, '#5ad36a', '#d8f79a');
+    else if (g.lemon)  out += pixelWheel(rimR - 4, top - 5, '#e8c53a', '#fbf3a6');
+    else if (g.orange) out += pixelWheel(rimR - 4, top - 5, '#f2913c', '#ffd79a');
+    if (g.cherry) {
+      out += px(rimL - 2, top - 5, '#7fe08a') + px(rimL - 3, top - 4, '#7fe08a')
+           + px(rimL - 4, top - 3, '#7fe08a')
+           + pxBlock(rimL - 5, top - 2, 5, 5, '#ff4d6d')
+           + pxBlock(rimL - 4, top - 1, 2, 1, '#ff9db2');
+    }
+
+
+    // The viewBox is the grid itself, so the art box can never drift out of
+    // step with the cell size. --neon feeds the CSS glow, so each drink lights
+    // up in its own colour.
+    return `<svg viewBox="0 0 ${PX_N * PX_U} ${PX_ROWS * PX_U}"`
+         + ` xmlns="http://www.w3.org/2000/svg" style="--neon:${tube}">${out}</svg>`;
   }
 
   function openDrink(id) {
     const d = allDrinks.find(x => x.id === id);
     if (!d) return;
-    pourScale = 1;
+    pourStrength = 1;   // every drink opens at full strength
+    modalDrink = d;
+    haptic(18);
     const avail = availableSet();
-    const missing = d.ingredients
+    const missing = pumped(d)
       .filter(i => !avail.has(i.name.trim().toLowerCase()))
       .map(i => i.name);
     const makeable = missing.length === 0;
 
-    document.getElementById('modal-art').innerHTML = glassSVG(d.glass, d.color);
+    document.getElementById('modal-art').innerHTML = glassSVG(d.glass, d.color, d.garnish);
 
-    const ingHtml = d.ingredients.map(i => {
+    const ingHtml = pumped(d).map(i => {
       const miss = avail.size && !avail.has(i.name.trim().toLowerCase());
       return `<div class="modal-ingredient${miss ? ' missing' : ''}">
         <span class="name">${escapeHtml(i.name)}</span><span class="ml">${i.ml} ml</span>
       </div>`;
     }).join('');
+
+    const hand = handAdded(d);
+    const handHtml = hand.length
+      ? `<div class="modal-section-title">Finish it yourself</div>` + hand.map(i =>
+          `<div class="modal-manual">
+             <span class="name">${escapeHtml(i.name)} &middot; ${i.ml} ml</span>
+             <span class="tag">BY HAND</span>
+           </div>`).join('')
+      : '';
 
     let availHtml = '';
     if (avail.size) {
@@ -476,11 +1341,13 @@
       pourBtn = '<button class="pour-btn" disabled>Set up pumps to pour</button>';
     } else if (makeable) {
       sizeSelector = `
-        <div class="modal-section-title">Size</div>
+        <div class="modal-section-title">Strength</div>
         <div class="menu-toggle">
-          <button class="toggle-btn active" onclick="setSize(1, this)">Single</button>
-          <button class="toggle-btn" onclick="setSize(2, this)">Double</button>
-        </div>`;
+          <button class="toggle-btn active" onclick="setStrength(1, this)">Regular</button>
+          <button class="toggle-btn" onclick="setStrength(${LIGHT_POUR}, this)">Light</button>
+        </div>
+        <div class="modal-note">Light pours ${Math.round(LIGHT_POUR * 100)}% of the
+          liquor and leaves the mixers at full measure — same drink, easier night.</div>`;
       pourBtn = `<button class="pour-btn" onclick="pourDrink('${d.id}')">${glassIcon}<span>Pour</span></button>`;
     } else {
       pourBtn = '<button class="pour-btn" disabled>Missing ingredients</button>';
@@ -489,22 +1356,35 @@
     document.getElementById('modal-body').innerHTML = `
       <div class="modal-cat">${escapeHtml(d.category)}</div>
       <h2 class="modal-name">${escapeHtml(d.name)}</h2>
+      <div id="modal-potency"></div>
       ${availHtml}
       <div class="modal-section-title">Recipe</div>
       ${ingHtml}
+      ${handHtml}
       ${garnish}
       <div class="modal-section-title">History</div>
       <div class="modal-history">${escapeHtml(d.history || '')}</div>
       ${sizeSelector}
       ${pourBtn}`;
 
+    renderModalPotency();
     document.getElementById('modal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
+  /* Redrawn whenever the strength changes, so "Light" shows the guest what it
+     actually buys them — usually a whole bar off the meter. */
+  function renderModalPotency() {
+    const el = document.getElementById('modal-potency');
+    if (!el || !modalDrink) return;
+    const light = pourStrength < 1;
+    const p = light ? modalDrink.potency_light : modalDrink.potency;
+    el.innerHTML = potencyMeter(p, { detail: true, light });
+  }
+
   function closeDrink() {
     document.getElementById('modal').classList.remove('open');
-    document.body.style.overflow = '';
+    document.body.style.overflow = desert ? 'hidden' : '';
   }
 
   function onModalClick(e) {
@@ -514,19 +1394,28 @@
   // ----- Pour flow -----
   let pourState = 'idle';   // 'idle' | 'pouring' | 'done'
   let pourOpenedAt = 0;
-  let pourScale = 1;        // size multiplier chosen in the modal
+  let pourStrength = 1;     // liquor multiplier chosen in the modal
+  let modalDrink = null;    // the drink the modal is currently showing
 
-  function setSize(scale, el) {
-    pourScale = scale;
+  // How much liquor a "Light" pour gets. The mixers stay at full measure, so
+  // the glass looks the same — it's a weaker drink, not a smaller one. The
+  // server owns the real value (recipes.LIGHT_STRENGTH) and ships it with the
+  // drink list, so the button and the meter can't disagree with the pump.
+  let LIGHT_POUR = 0.6;
+
+  function setStrength(strength, el) {
+    pourStrength = strength;
     el.parentElement.querySelectorAll('.toggle-btn')
       .forEach(b => b.classList.toggle('active', b === el));
+    renderModalPotency();
+    haptic(12);
   }
 
   async function pourDrink(id) {
     const res = await fetch(`/api/pour/${id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scale: pourScale }),
+      body: JSON.stringify({ scale: 1, strength: pourStrength }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -561,7 +1450,8 @@
     pourOpenedAt = Date.now();
     const overlay = document.getElementById('pour-overlay');
     overlay.classList.remove('done');
-    document.getElementById('pour-label').textContent = fiesta ? PARTY.pourLabel : 'Pouring';
+    document.getElementById('pour-label').textContent =
+      desert ? DESERT.pourLabel : fiesta ? PARTY.pourLabel : 'Pouring';
     document.getElementById('pour-drink-name').textContent = name || '';
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -580,17 +1470,19 @@
     pourState = 'done';
     const overlay = document.getElementById('pour-overlay');
     overlay.classList.add('done');
-    document.getElementById('pour-label').textContent = fiesta ? PARTY.doneLabel : 'Done';
+    document.getElementById('pour-label').textContent =
+      desert ? DESERT.doneLabel : fiesta ? PARTY.doneLabel : 'Done';
     document.getElementById('pour-current').textContent =
-      fiesta ? PARTY.doneMessage : 'Enjoy! 🍸';
+      desert ? DESERT.doneMessage : fiesta ? PARTY.doneMessage : 'Enjoy! 🍸';
     if (fiesta) burstConfetti(60, 1000, true);
+    haptic([40, 70, 40, 70, 120]);   // the drink is ready and nobody is watching the screen
     const fill = document.getElementById('pour-fill');
     fill.style.transition = 'width 0.3s ease';
     fill.style.width = '100%';
     document.getElementById('pour-time').textContent = '';
     setTimeout(() => {
       overlay.classList.remove('open', 'done');
-      document.body.style.overflow = '';
+      document.body.style.overflow = desert ? 'hidden' : '';
       pourState = 'idle';
     }, 2600);
   }
@@ -601,7 +1493,7 @@
     fill.style.transition = 'none';
     fill.style.width = '0%';
     document.getElementById('pour-overlay').classList.remove('open', 'done');
-    document.body.style.overflow = '';
+    document.body.style.overflow = desert ? 'hidden' : '';
     pourState = 'idle';
   }
 
@@ -618,27 +1510,45 @@
   }
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeDrink();
+    if (e.key === 'Escape') { closeDrink(); closeHost(); }
+    if (!desert) return;
+    const modalOpen = document.getElementById('modal').classList.contains('open')
+                   || document.getElementById('host-panel').classList.contains('open');
+    if (modalOpen) return;
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); spinSwivel(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); spinSwivel(1); }
   });
 
-  // ?fiesta=1 / ?fiesta=0 forces the theme and sticks — so a bookmark or QR
-  // code can land every guest's phone in fiesta mode with no toggling.
-  let savedTheme = 'default';
-  try { savedTheme = localStorage.getItem('dm-theme') || 'default'; } catch {}
-  const param = new URLSearchParams(location.search).get('fiesta');
-  if (param !== null) {
-    savedTheme = (param === '0' || param === 'false') ? 'default' : 'fiesta';
-    try { localStorage.setItem('dm-theme', savedTheme); } catch {}
+  // Paint the last theme this phone saw so the page doesn't flash the wrong
+  // party for a poll's worth of time; the machine's answer wins a moment
+  // later. ?theme=desert|fiesta|default forces one locally — handy for a QR
+  // code — without changing what everyone else sees.
+  let bootTheme = 'default';
+  try { bootTheme = localStorage.getItem('dm-theme') || 'default'; } catch {}
+  const params = new URLSearchParams(location.search);
+  const themeParam = params.get('theme');
+  const fiestaParam = params.get('fiesta');   // kept working from the old QR codes
+  if (themeParam && THEMES[themeParam]) {
+    bootTheme = themeParam;
+    themeSetAt = Date.now();
+  } else if (fiestaParam !== null) {
+    bootTheme = (fiestaParam === '0' || fiestaParam === 'false') ? 'default' : 'fiesta';
+    themeSetAt = Date.now();
   }
-  applyTheme(savedTheme === 'fiesta');
+  applyTheme(bootTheme);
+  rememberTheme(bootTheme);
+  renderThemeList();
   if (fiesta) burstConfetti(22, 2600);   // a light welcome sprinkle, behind the cards
 
-  // the bunting is sized to the viewport, so re-cut it when that changes
+  // The bunting is cut to the viewport and the swivel table is laid out in
+  // pixels, so both need re-measuring when the window changes.
   let resizeTimer;
   window.addEventListener('resize', () => {
-    if (!fiesta) return;
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(buildPapelPicado, 200);
+    resizeTimer = setTimeout(() => {
+      if (fiesta) buildPapelPicado();
+      if (desert) layoutSwivel();
+    }, 200);
   });
 
   loadDrinks();

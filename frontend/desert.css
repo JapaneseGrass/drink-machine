@@ -1,0 +1,691 @@
+/* ============================================================
+   UGNAR'S BAR — theme ported from the eremidis-party-invite
+   pixel-art desert (same palette, same fonts, same CRT vibe).
+
+   Everything here is scoped to `body.desert` except the fonts and
+   the host-controls panel, which are shared across all themes.
+
+   The scene is a fixed full-screen backdrop; the swivel carousel
+   floats on top of it. Nothing in this theme scrolls the page.
+   ============================================================ */
+
+/* Fonts are served from disk, not Google Fonts — the Pi runs its own
+   hotspot at the party with no internet, so a CDN link would silently
+   fall back to a system font on every guest's phone. */
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('/static/fonts/press-start-2p-latin.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'VT323';
+  src: url('/static/fonts/vt323-latin.woff2') format('woff2');
+  font-display: swap;
+}
+
+body.desert {
+  --sky-top:    #080318;
+  --sky-mid:    #2a1049;
+  --sky-glow:   #c94b6b;
+  --sky-low:    #ef7d57;
+  --sky-horizon:#ffcd75;
+
+  --dune-1: #e6a866;
+  --dune-2: #d08159;
+  --dune-3: #a8623f;
+  --dune-4: #7a3f2c;
+
+  --cactus:      #3a7d44;
+  --cactus-dark: #2b5e33;
+  --cactus-lite: #5aa165;
+
+  --ink:    #2b1a2e;
+  --cream:  #fff3d6;
+  --gold:   #ffcd75;
+  --shadow: #1a0f2e;
+
+  background: var(--sky-top);
+  color: var(--cream);
+  font-family: 'VT323', monospace;
+  -webkit-font-smoothing: none;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+/* The classic + fiesta furniture has no place in the desert. */
+body.desert > header,
+body.desert .menu,
+body.desert .nav,
+body.desert .papel,
+body.desert .confetti-layer { display: none !important; }
+
+body.desert svg { image-rendering: pixelated; shape-rendering: crispEdges; }
+
+/* The glasses are pixel art here too (pixelGlassSVG), so they snap to the same
+   grid as the scene. The neon is a CSS drop-shadow rather than an SVG filter:
+   the swivel table animates up to seven of these at once on the party iPad,
+   and the compositor is far happier with drop-shadow than with feGaussianBlur.
+   --neon is set per drink, so each glass lights up in its own colour. */
+body.desert .drink-art svg,
+body.desert .modal-art svg {
+  filter: drop-shadow(0 0 2px var(--neon, #fff3d6))
+          drop-shadow(0 0 9px var(--neon, #fff3d6));
+}
+
+/* Kiosk duty: this runs unattended on an iPad by the machine, so a long
+   press must not pop a selection handle or a share sheet over the menu. */
+body.desert .desert-stage,
+body.desert .desert-scene {
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Scene ---------- */
+.desert-scene { display: none; }
+body.desert .desert-scene {
+  display: block;
+  position: fixed; inset: 0; z-index: 0;
+  overflow: hidden;
+  box-shadow: inset 0 0 140px 20px rgba(26, 15, 46, 0.6);
+}
+
+.d-sky {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--sky-top)     0%,
+    var(--sky-top)    22%,
+    var(--sky-mid)    46%,
+    var(--sky-glow)   64%,
+    var(--sky-low)    76%,
+    var(--sky-horizon)86%
+  );
+}
+
+.d-stars { position: absolute; inset: 0; }
+.d-star {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: var(--cream);
+  box-shadow: 0 0 0 1px rgba(255, 243, 214, 0.25);
+  animation: d-twinkle 3s steps(2, jump-none) infinite;
+}
+.d-star.big { width: 4px; height: 4px; }
+@keyframes d-twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.6); }
+}
+
+.d-cloud { position: absolute; opacity: 0.85; animation: d-drift 60s linear infinite; }
+.d-cloud span { display: block; background: rgba(255, 243, 214, 0.75); position: absolute; }
+@keyframes d-drift {
+  from { transform: translateX(-140px); }
+  to   { transform: translateX(110vw); }
+}
+
+.d-dunes { position: absolute; left: 0; right: 0; bottom: 0; height: 55%; }
+.d-dune  { position: absolute; left: -2%; right: -2%; width: 104%; }
+.d-dune svg { display: block; width: 100%; height: 100%; }
+
+.d-cacti  { position: absolute; left: 0; right: 0; bottom: 0; height: 60%; pointer-events: none; }
+.d-cactus { position: absolute; bottom: 0; filter: drop-shadow(4px 0 0 rgba(26, 15, 46, 0.25)); }
+
+.d-tumbleweed {
+  position: absolute; bottom: 9%; left: -60px;
+  width: 34px; height: 34px;
+  animation: d-roll 16s linear infinite;
+}
+@keyframes d-roll {
+  from { transform: translateX(-60px) rotate(0deg); }
+  to   { transform: translateX(112vw) rotate(1440deg); }
+}
+
+.d-scanlines {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: repeating-linear-gradient(to bottom,
+    rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.10) 2px 4px);
+  mix-blend-mode: multiply;
+}
+
+/* ---------- Crescent moon ----------
+   Straight from the invite. The disc lives on ::before so the crescent mask
+   carves the shape, and drop-shadow (not box-shadow) makes the glow follow
+   the carved crescent instead of ringing a full circle. */
+.d-moon {
+  position: absolute;
+  top: 7%;
+  left: clamp(18px, 6vw, 90px);
+  width: clamp(38px, 7vw, 62px);
+  height: clamp(38px, 7vw, 62px);
+  z-index: 2;
+  animation: d-moon-bob 7s ease-in-out infinite;
+}
+.d-moon::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 34% 32%, #ffffff 0%, #e9edf7 44%, #c6cfe6 78%, #a9b4d4 100%);
+  -webkit-mask: radial-gradient(circle at 72% 38%, #0000 0 54%, #000 55%);
+          mask: radial-gradient(circle at 72% 38%, #0000 0 54%, #000 55%);
+  filter: drop-shadow(0 0 6px rgba(220, 228, 247, 0.55));
+}
+@keyframes d-moon-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* ---------- Title ---------- */
+.desert-stage { display: none; }
+body.desert .desert-stage {
+  display: flex;
+  flex-direction: column;
+  position: fixed; inset: 0; z-index: 4;
+  padding: clamp(14px, 4vh, 30px) 0 calc(10px + env(safe-area-inset-bottom, 0px));
+}
+
+.d-card { text-align: center; padding: 0 16px; flex: none; }
+.d-eyebrow {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 1.9vw, 11px);
+  letter-spacing: 2px; color: var(--gold);
+  text-shadow: 2px 2px 0 var(--shadow);
+  margin-bottom: 12px;
+}
+.d-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(17px, 6.4vw, 40px);
+  line-height: 1.2; color: var(--cream);
+  font-weight: normal;
+  letter-spacing: 0;
+  text-transform: none;
+  text-shadow: 3px 3px 0 var(--sky-glow), 6px 6px 0 var(--shadow);
+}
+.d-title .accent { color: var(--gold); }
+.d-sub {
+  font-size: clamp(15px, 3.2vw, 22px);
+  letter-spacing: 1px; margin-top: 10px; color: var(--cream);
+  text-shadow: 2px 2px 0 var(--shadow);
+}
+
+/* ---------- The swivel table ----------
+   Cards are absolutely stacked at the centre of .swivel and pushed out onto
+   an ellipse by JS (transform + opacity + z-index per card). The front seat
+   lands dead centre in the box and the rest recede upward from it.
+
+   The box is sized to hug the cards rather than eating the leftover height,
+   which is what keeps the drink's name sitting right under its glass. The
+   auto margins then centre the table-plus-name group in whatever space the
+   title leaves — important on the iPad, which is far taller than a phone. */
+.swivel {
+  --card-w: clamp(150px, 40vw, 270px);
+  --card-h: clamp(195px, 52vw, 351px);
+  /* The box has to be taller than the card it holds, because the front glass
+     is scaled up past 1 (SWIVEL_SCALE_FRONT) about a 55% origin and grows
+     downward out of its own box. 1.16 leaves the grown front glass ~9% of a
+     card height clear of this bottom edge — which is exactly where the caption
+     starts, so this ratio is what keeps the name off the glass. Raise
+     SWIVEL_SCALE_FRONT and this has to come up with it. */
+  --box-h: calc(var(--card-h) * 1.16);
+
+  position: relative;
+  /* Never shrink. Under `flex: 0 1 auto` a tight stage would squeeze the box
+     while the cards (absolutely positioned, fixed size) stayed put — which
+     puts the glass straight back through the caption. Overflowing a very short
+     screen is the better failure. */
+  flex: none;
+  height: var(--box-h);
+  margin-top: auto;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.swivel.dragging { cursor: grabbing; }
+
+.swivel-card {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: var(--card-w);
+  height: var(--card-h);
+  /* Pull the card back by half its own size so `left/top: 50%` really does
+     centre it — the JS then translates it out onto the ellipse. */
+  margin-left: calc(var(--card-w) * -0.5);
+  margin-top: calc(var(--card-h) * -0.5);
+  will-change: transform, opacity;
+  transform-origin: 50% 55%;
+}
+.swivel-card .drink-art { width: 100%; height: 100%; }
+.swivel-card .drink-art svg { width: 100%; height: 100%; display: block; }
+
+/* Zero-gravity drift. This has to sit on an inner element: layoutSwivel()
+   rewrites the card's own transform on every drag frame and would wipe out
+   an animation sharing that property. Each card gets its own duration and a
+   negative delay so the table never bobs in unison. */
+.swivel-float {
+  width: 100%; height: 100%;
+  animation: swivel-wobble var(--wob, 6s) ease-in-out infinite;
+  animation-delay: var(--wob-delay, 0s);
+  will-change: transform;
+}
+@keyframes swivel-wobble {
+  0%, 100% { transform: translate3d(0, 0, 0)      rotate(-1.5deg); }
+  30%      { transform: translate3d(2px, -8px, 0) rotate(1.3deg); }
+  65%      { transform: translate3d(-2px, 4px, 0) rotate(-0.5deg); }
+}
+
+/* A pool of light under the front glass, so it reads as sitting on the table
+   rather than hovering — and it's the drink's own neon, so the colour spills
+   onto the table the way a real sign would. Every pixel glass ends on the same
+   row (see PIXEL_GLASS), so one height works for all five; only the footprint
+   changes with how wide the glass stands. */
+.swivel-card::after {
+  content: '';
+  position: absolute; left: 50%; bottom: 3%;
+  width: 40%; height: 16px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, var(--neon, #ffcd75), transparent 70%);
+  opacity: calc(var(--glow, 0) * 0.45);
+  pointer-events: none;
+}
+.swivel-card.glass-highball::after { width: 30%; }
+.swivel-card.glass-rocks::after    { width: 60%; }
+.swivel-card.glass-shot::after     { width: 30%; }
+
+/* ---------- Caption under the table ----------
+   Deliberately tight to the glass above it — the name belongs to the drink,
+   not to the bottom of the screen. min-height reserves room for two lines so
+   a long name doesn't shove the dots around as the table spins. */
+/* Butts straight up against the bottom of .swivel — no negative margin. The
+   gap the name needs is already built into --box-h, and pulling the caption up
+   on top of that is what put it through the front glass. */
+.swivel-caption {
+  flex: none; text-align: center; padding: 0 16px;
+  margin-top: 0;
+  margin-bottom: auto;
+  min-height: 124px;
+}
+
+/* The detent. `navigator.vibrate` does the real work on Android, but iPadOS
+   Safari has no vibration API at all and the party runs on an iPad — so the
+   caption also twitches on every seat the table passes. It's the half of the
+   feedback that is guaranteed to arrive, and it's readable from across the
+   room, which a buzz in a device nobody is holding is not. */
+.swivel-caption.detent { animation: sc-detent 140ms steps(3, jump-none); }
+@keyframes sc-detent {
+  0%   { transform: translateY(3px) scale(0.985); }
+  100% { transform: translateY(0)   scale(1); }
+}
+/* Sized for a kiosk — read from arm's length across a room, not held. */
+.sc-cat {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 1.7vw, 13px);
+  color: var(--gold); letter-spacing: 2px;
+  text-shadow: 2px 2px 0 var(--shadow);
+}
+.sc-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(11px, 3.6vw, 27px);
+  color: var(--cream); margin-top: 12px; line-height: 1.35;
+  text-shadow: 2px 2px 0 var(--sky-glow), 4px 4px 0 var(--shadow);
+}
+.sc-hint {
+  font-size: clamp(14px, 2.8vw, 21px);
+  color: rgba(255, 243, 214, 0.62);
+  margin-top: 10px;
+  animation: d-blink 1.4s steps(1) infinite;
+}
+@keyframes d-blink { 0%, 62% { opacity: 1; } 63%, 100% { opacity: 0.25; } }
+
+/* ---------- Potency meter ----------
+   Five bars under the drink's name. Colour says the same thing as the word so
+   it lands before anyone reads it, which matters on a carousel someone is
+   spinning past. Theme-neutral, like the modal furniture below — the meter
+   shows up in the classic and fiesta menus too. */
+.potency {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  --pot: #9aa0a6;
+}
+.potency.lvl-0 { --pot: #5ee6a8; }
+.potency.lvl-1 { --pot: #7ee07a; }
+.potency.lvl-2 { --pot: #d9e05a; }
+.potency.lvl-3 { --pot: #ffcd75; }
+.potency.lvl-4 { --pot: #ff8a4c; }
+.potency.lvl-5 { --pot: #ff4d6d; }
+
+.pot-bars { display: flex; gap: 3px; }
+.pot-bars i {
+  display: block; width: 13px; height: 6px;
+  background: rgba(255, 255, 255, 0.13);
+}
+.pot-bars i.on { background: var(--pot); }
+.pot-label {
+  font-size: 0.66rem; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--pot); opacity: 0.9;
+}
+.pot-tag {
+  margin-left: 6px; padding: 1px 5px;
+  font-size: 0.85em; letter-spacing: 1px;
+  color: #0a0a0a; background: var(--pot);
+}
+
+/* In the desert the bars are neon tubes like everything else. */
+body.desert .pot-bars i { width: 16px; height: 8px; }
+body.desert .pot-bars i.on { box-shadow: 0 0 5px var(--pot), 0 0 12px var(--pot); }
+body.desert .pot-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 1.4vw, 10px); letter-spacing: 1px;
+  text-shadow: 2px 2px 0 var(--shadow);
+}
+body.desert .pot-tag { font-family: 'Press Start 2P', monospace; }
+.sc-potency { margin-top: 12px; }
+#modal-potency:not(:empty) { margin: 9px 0 3px; }
+body.desert #modal-potency:not(:empty) { margin: 12px 0 4px; }
+.drink-card .potency { margin-top: 7px; }
+
+.swivel-dots {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 5px; margin-top: 10px;
+}
+.swivel-dot {
+  width: 5px; height: 5px;
+  background: rgba(255, 243, 214, 0.3);
+}
+.swivel-dot.on { background: var(--gold); transform: scale(1.5); }
+
+/* Arrows — the swipe is the point, but a tap target helps on a crowded
+   table and is the only way through for anyone using a mouse. */
+.swivel-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 20;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(14px, 2vw, 20px); line-height: 1;
+  color: var(--cream);
+  background: rgba(43, 26, 46, 0.72);
+  border: 2px solid var(--gold);
+  box-shadow: 3px 3px 0 var(--shadow);
+  padding: clamp(12px, 2vw, 20px) clamp(10px, 1.6vw, 16px); cursor: pointer;
+}
+.swivel-arrow:active { transform: translateY(-50%) translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow); }
+.swivel-arrow.left  { left: clamp(6px, 2vw, 28px); }
+.swivel-arrow.right { right: clamp(6px, 2vw, 28px); }
+
+/* Empty state — no bottles loaded yet, or nothing pourable. */
+.swivel-empty {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 0 26px; gap: 14px;
+}
+.swivel-empty .se-head {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(10px, 2.8vw, 14px);
+  color: var(--gold); line-height: 1.6;
+  text-shadow: 2px 2px 0 var(--shadow);
+}
+.swivel-empty .se-sub {
+  font-size: clamp(16px, 3.2vw, 20px);
+  color: rgba(255, 243, 214, 0.75); line-height: 1.4;
+}
+
+/* ============================================================
+   DESERT-SKINNED MODAL + POUR OVERLAY
+   The markup is shared with the other themes; only the paint changes.
+   ============================================================ */
+body.desert .modal-backdrop { background: rgba(26, 15, 46, 0.88); }
+body.desert .modal-card {
+  background: var(--ink);
+  border: 4px solid var(--gold);
+  border-radius: 0;
+  box-shadow: 8px 8px 0 var(--shadow);
+}
+body.desert .modal-close {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px; color: var(--cream);
+  background: none; border: none;
+}
+body.desert .modal-close:hover { color: var(--gold); }
+body.desert .modal-cat {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px; letter-spacing: 2px; color: var(--gold);
+}
+body.desert .modal-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(13px, 3.4vw, 18px);
+  color: var(--cream); line-height: 1.4;
+  text-shadow: 2px 2px 0 var(--shadow);
+  letter-spacing: 0;
+}
+body.desert .modal-section-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px; letter-spacing: 1px; color: var(--gold);
+  border-bottom: 2px solid rgba(255, 205, 117, 0.3);
+  padding-bottom: 8px;
+}
+body.desert .modal-ingredient {
+  font-size: 19px; color: var(--cream);
+  border-bottom: 1px dashed rgba(255, 205, 117, 0.22);
+}
+body.desert .modal-ingredient .ml { color: var(--gold); font-size: 18px; }
+body.desert .modal-history,
+body.desert .modal-garnish { font-size: 18px; color: rgba(255, 243, 214, 0.72); line-height: 1.4; }
+body.desert .modal-availability.yes { color: var(--cactus-lite); font-size: 18px; }
+body.desert .modal-availability.no  { color: var(--sky-glow);    font-size: 18px; }
+
+/* Hand-added ingredients — the Sprite, the garnish. The machine can't
+   pour these, so they're called out instead of hidden. */
+.modal-manual {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 10px; padding: 9px 0;
+}
+.modal-manual .name { opacity: 0.9; }
+.modal-manual .tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px; letter-spacing: 1px;
+  color: var(--ink); background: var(--gold);
+  padding: 4px 6px; white-space: nowrap;
+}
+body.desert .modal-manual { font-size: 19px; color: var(--cream); }
+
+/* Explains what "Light" actually does, so nobody reads it as a smaller pour. */
+.modal-note {
+  font-size: 0.8rem; line-height: 1.5;
+  color: #8a8a92; margin: 10px 0 4px;
+}
+body.desert .modal-note {
+  font-family: 'VT323', monospace; font-size: 17px;
+  color: rgba(255, 243, 214, 0.6);
+}
+
+body.desert .menu-toggle { gap: 8px; }
+body.desert .toggle-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px; border-radius: 0;
+  background: transparent; color: var(--gold);
+  border: 2px solid var(--gold);
+}
+body.desert .toggle-btn.active {
+  background: var(--gold); color: var(--ink);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+body.desert .pour-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px; letter-spacing: 1px; border-radius: 0;
+  color: var(--cream); background: #b13e53;
+  border: 2px solid var(--gold);
+  box-shadow: 0 4px 0 #6f2033, 0 6px 0 var(--shadow);
+  transition: transform .06s steps(2), box-shadow .06s steps(2);
+}
+body.desert .pour-btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #6f2033, 0 2px 0 var(--shadow);
+}
+body.desert .pour-btn:disabled {
+  background: transparent; color: rgba(255, 243, 214, 0.45);
+  border-color: rgba(255, 205, 117, 0.35); box-shadow: none;
+}
+
+body.desert .pour-overlay { background: rgba(26, 15, 46, 0.95); }
+body.desert .pour-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(14px, 4.4vw, 24px);
+  color: var(--gold); letter-spacing: 2px;
+  text-shadow: 3px 3px 0 var(--shadow);
+}
+body.desert .pour-drink-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(10px, 2.8vw, 14px);
+  color: var(--cream); line-height: 1.5;
+}
+body.desert .pour-current,
+body.desert .pour-time { font-size: 19px; color: rgba(255, 243, 214, 0.8); }
+body.desert .pour-progress {
+  border: 2px solid var(--gold); border-radius: 0;
+  background: #150c22; padding: 2px;
+}
+body.desert .pour-progress-fill { background: var(--gold); border-radius: 0; }
+body.desert .pour-ring { border-top-color: var(--gold); border-right-color: var(--gold); }
+body.desert .pour-stop {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px; border-radius: 0;
+  color: var(--gold); background: transparent;
+  border: 2px solid var(--gold);
+}
+
+/* ============================================================
+   HOST CONTROLS — available in every theme
+   ============================================================ */
+.host-btn {
+  position: fixed; z-index: 60;
+  right: calc(12px + env(safe-area-inset-right, 0px));
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px; letter-spacing: 1px;
+  color: #f0c060; background: rgba(10, 10, 10, 0.78);
+  border: 2px solid rgba(240, 192, 96, 0.5);
+  padding: 10px 11px; cursor: pointer;
+  opacity: 0.55; transition: opacity .2s;
+}
+.host-btn:hover, .host-btn:focus-visible { opacity: 1; }
+body.desert .host-btn {
+  color: var(--gold); background: rgba(43, 26, 46, 0.8);
+  border-color: var(--gold); box-shadow: 3px 3px 0 var(--shadow);
+}
+
+.host-backdrop {
+  position: fixed; inset: 0; z-index: 70;
+  background: rgba(6, 4, 12, 0.86);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.host-backdrop.open { display: flex; }
+.host-card {
+  width: min(94vw, 420px); max-height: 86vh; overflow-y: auto;
+  position: relative;
+  background: #101014;
+  border: 3px solid rgba(240, 192, 96, 0.6);
+  border-radius: 16px;
+  padding: 22px 20px 24px;
+}
+body.desert .host-card {
+  background: var(--ink); border: 4px solid var(--gold);
+  border-radius: 0; box-shadow: 8px 8px 0 var(--shadow);
+}
+.host-card h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px; letter-spacing: 1px;
+  color: #f0c060; margin-bottom: 4px;
+}
+body.desert .host-card h2 { color: var(--gold); text-shadow: 2px 2px 0 var(--shadow); }
+.host-card .host-sub {
+  font-size: 0.8rem; color: #7a7a7a; margin-bottom: 20px;
+}
+body.desert .host-card .host-sub { font-family: 'VT323', monospace; font-size: 18px; color: rgba(255, 243, 214, 0.62); }
+.host-close {
+  position: absolute; top: 12px; right: 14px;
+  font-family: 'Press Start 2P', monospace; font-size: 12px;
+  background: none; border: none; color: #888; cursor: pointer; padding: 4px;
+}
+.host-close:hover { color: #f0c060; }
+body.desert .host-close { color: var(--cream); }
+
+.host-section {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px; letter-spacing: 2px; color: #666;
+  margin: 22px 0 12px; text-transform: uppercase;
+}
+.host-section:first-of-type { margin-top: 0; }
+body.desert .host-section {
+  color: var(--gold);
+  border-bottom: 2px solid rgba(255, 205, 117, 0.25);
+  padding-bottom: 8px;
+}
+
+.theme-option {
+  display: block; width: 100%; text-align: left;
+  background: #18181d; color: #e8e8e8;
+  border: 2px solid #26262c; border-radius: 12px;
+  padding: 13px 14px; margin-bottom: 9px; cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s, background .15s;
+}
+.theme-option:hover { border-color: #4a4a52; }
+.theme-option.active { border-color: #f0c060; background: rgba(240, 192, 96, 0.09); }
+body.desert .theme-option {
+  background: #150c22; border: 2px solid rgba(255, 205, 117, 0.28);
+  border-radius: 0; color: var(--cream);
+}
+body.desert .theme-option.active {
+  border-color: var(--gold); background: rgba(255, 205, 117, 0.12);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+.theme-option .to-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px; letter-spacing: 1px; line-height: 1.5;
+}
+body.desert .theme-option.active .to-name { color: var(--gold); }
+.theme-option .to-note {
+  font-size: 0.78rem; color: #7d7d85; margin-top: 7px;
+}
+body.desert .theme-option .to-note { font-family: 'VT323', monospace; font-size: 17px; color: rgba(255, 243, 214, 0.6); }
+.theme-option .to-live {
+  float: right;
+  font-family: 'Press Start 2P', monospace; font-size: 7px;
+  color: #0a0a0a; background: #f0c060; padding: 3px 5px;
+}
+body.desert .theme-option .to-live { color: var(--ink); background: var(--gold); }
+
+.host-link {
+  display: flex; justify-content: space-between; align-items: center;
+  text-decoration: none;
+  background: #18181d; color: #d8d8d8;
+  border: 2px solid #26262c; border-radius: 12px;
+  padding: 13px 14px; margin-bottom: 9px;
+  font-size: 0.92rem;
+}
+.host-link:hover { border-color: #4a4a52; color: #f0c060; }
+.host-link .arrow { color: #f0c060; }
+body.desert .host-link {
+  background: #150c22; border: 2px solid rgba(255, 205, 117, 0.28);
+  border-radius: 0; color: var(--cream);
+  font-family: 'VT323', monospace; font-size: 20px;
+}
+body.desert .host-link .arrow { color: var(--gold); }
+
+/* ---------- Short phones: give the table the room it needs ---------- */
+@media (max-height: 700px) {
+  .d-eyebrow { margin-bottom: 8px; }
+  .d-sub { margin-top: 6px; font-size: clamp(14px, 3vw, 18px); }
+  /* .swivel no longer shrinks to fit, so on a short screen the card itself has
+     to come down — sized off the height here, not the width, since height is
+     what's scarce. Same 0.769 aspect as the default pair. */
+  .swivel { --card-h: clamp(150px, 40vh, 300px); --card-w: clamp(115px, 30.8vh, 231px); }
+  .swivel-caption { min-height: 104px; }
+  .sc-potency { margin-top: 8px; }
+  .sc-hint { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .d-star, .d-cloud, .d-tumbleweed, .d-moon, .swivel-float, .sc-hint,
+  .swivel-caption.detent {
+    animation: none !important;
+  }
+}
